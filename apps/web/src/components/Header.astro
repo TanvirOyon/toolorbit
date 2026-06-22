@@ -1,0 +1,46 @@
+---
+import { Orbit } from 'lucide-react';
+import SearchTrigger from './SearchTrigger.astro';
+import ThemeToggle from '../islands/ThemeToggle.tsx';
+import CommandPalette from '../islands/CommandPalette.tsx';
+import { CATEGORIES } from '@toolorbit/tool-registry';
+
+// Only link categories that actually have tools live yet — never a fake/
+// "coming soon" link presented as real, per the blueprint's policy.
+import { getCategoryCounts } from '@toolorbit/tool-registry';
+const counts = getCategoryCounts(CATEGORIES);
+const liveCategories = CATEGORIES.filter((c) => counts[c.slug] > 0);
+---
+
+<header
+  class="sticky top-0 z-header border-b border-base-700 bg-base-950/90 backdrop-blur-sm"
+>
+  <div class="mx-auto flex h-16 max-w-6xl items-center gap-4 px-4 sm:px-6">
+    <a href="/" class="flex items-center gap-2 font-display text-lg font-bold text-base-50">
+      <Orbit size={22} className="text-interactive" aria-hidden="true" />
+      ToolOrbit
+    </a>
+
+    <nav class="hidden flex-1 items-center gap-5 md:flex">
+      {
+        liveCategories.map((category) => (
+          <a
+            href={`/${category.slug}-tools`}
+            class="text-sm text-base-300 transition-colors hover:text-base-50"
+          >
+            {category.name}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="ml-auto flex items-center gap-2">
+      <div class="hidden sm:block">
+        <SearchTrigger />
+      </div>
+      <ThemeToggle client:idle />
+    </div>
+  </div>
+</header>
+
+<CommandPalette client:idle />

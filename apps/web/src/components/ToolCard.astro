@@ -1,0 +1,36 @@
+---
+import * as Icons from 'lucide-react';
+import type { ToolDefinition } from '@toolorbit/tool-registry';
+
+export interface Props {
+  tool: ToolDefinition;
+}
+
+const { tool } = Astro.props;
+
+function toPascalCase(kebab: string): string {
+  return kebab
+    .split('-')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join('');
+}
+
+const Icon = (Icons as unknown as Record<string, Icons.LucideIcon>)[toPascalCase(tool.icon)];
+---
+
+<a
+  href={`/tools/${tool.slug}`}
+  class="group flex flex-col gap-3 rounded-xl border border-base-700 bg-base-900 p-5 transition-all duration-150 hover:border-interactive/40 hover:shadow-glow"
+>
+  <div
+    class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-interactive-muted text-interactive"
+  >
+    <Icon size={20} aria-hidden="true" />
+  </div>
+  <div>
+    <h3 class="font-display text-base font-semibold text-base-50 group-hover:text-interactive">
+      {tool.name}
+    </h3>
+    <p class="mt-1 text-sm text-base-400">{tool.description}</p>
+  </div>
+</a>

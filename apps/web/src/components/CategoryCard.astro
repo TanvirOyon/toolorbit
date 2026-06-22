@@ -1,0 +1,40 @@
+---
+import * as Icons from 'lucide-react';
+import type { CategoryDefinition } from '@toolorbit/tool-registry';
+
+export interface Props {
+  category: CategoryDefinition;
+  toolCount: number;
+}
+
+const { category, toolCount } = Astro.props;
+
+function toPascalCase(kebab: string): string {
+  return kebab
+    .split('-')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join('');
+}
+
+const Icon = (Icons as unknown as Record<string, Icons.LucideIcon>)[toPascalCase(category.icon)];
+const isComingSoon = toolCount === 0;
+const Tag = isComingSoon ? 'div' : 'a';
+---
+
+<Tag
+  href={isComingSoon ? undefined : `/${category.slug}-tools`}
+  class={`group relative block rounded-xl border border-base-700 bg-base-900 p-5 transition-all duration-150 ${
+    isComingSoon ? 'opacity-60' : 'hover:border-interactive/40 hover:shadow-glow'
+  }`}
+>
+  <div
+    class="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-interactive-muted text-interactive"
+  >
+    <Icon size={20} aria-hidden="true" />
+  </div>
+  <h3 class="font-display text-base font-semibold text-base-50">{category.name}</h3>
+  <p class="mt-1 line-clamp-2 text-sm text-base-400">{category.description}</p>
+  <p class="mt-3 text-xs font-medium text-base-400">
+    {isComingSoon ? 'Coming soon' : `${toolCount} tool${toolCount === 1 ? '' : 's'}`}
+  </p>
+</Tag>

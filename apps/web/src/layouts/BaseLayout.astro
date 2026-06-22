@@ -1,0 +1,90 @@
+---
+import '../styles/fonts.ts';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_URL, absoluteUrl } from '../lib/seo';
+// Resolved through Vite's asset pipeline so the preload href matches the
+// real, content-hashed filename emitted at build time (not a guessed path).
+// @ts-expect-error - ?url import has no type declaration
+import interWoff2 from '@fontsource/inter/files/inter-latin-400-normal.woff2?url';
+
+export interface Props {
+  title: string;
+  description: string;
+  ogImage?: string;
+  canonicalPath?: string;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const {
+  title,
+  description,
+  ogImage = '/og-default.png',
+  canonicalPath = Astro.url.pathname,
+  jsonLd,
+} = Astro.props;
+
+const canonicalUrl = absoluteUrl(canonicalPath);
+const jsonLdEntries = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script is:inline>
+      // Runs before paint to avoid a flash of the wrong theme. Mirrors the
+      // 'toolorbit:theme' key written by the ThemeToggle island
+      // (@nanostores/persistent stores it as a plain string, not JSON).
+      try {
+        const saved = localStorage.getItem('toolorbit:theme');
+        if (saved === 'light') document.documentElement.setAttribute('data-theme', 'light');
+      } catch {}
+    </script>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Preload critical fonts to avoid invisible-text flash -->
+    <link rel="preload" href={interWoff2} as="font" type="font/woff2" crossorigin />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={absoluteUrl(ogImage)} />
+    <meta property="og:site_name" content="ToolOrbit" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={absoluteUrl(ogImage)} />
+
+    {
+      jsonLdEntries.map((entry) => (
+        <script type="application/ld+json" set:html={JSON.stringify(entry)} />
+      ))
+    }
+
+    <!--
+      Cloudflare Web Analytics beacon — token intentionally left blank.
+      Add your token in Cloudflare dashboard → Analytics → Web Analytics,
+      then paste it below. No third-party cookies, GDPR-friendly by design.
+
+      <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
+        data-cf-beacon='{"token": "YOUR_TOKEN_HERE"}'></script>
+    -->
+  </head>
+  <body class="flex min-h-screen flex-col">
+    <Header />
+    <main class="flex-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

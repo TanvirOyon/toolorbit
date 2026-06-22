@@ -1,0 +1,46 @@
+---
+export const prerender = true;
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="About ToolOrbit — Who Built This"
+  description="ToolOrbit is built and maintained by a solo developer who wanted fast, ad-light, privacy-respecting tools without the bloat most utility sites ship today."
+  canonicalPath="/about"
+>
+  <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6">
+    <h1 class="font-display text-3xl font-bold text-base-50 sm:text-4xl">About ToolOrbit</h1>
+
+    <div class="mt-8 space-y-5 text-base-200 leading-relaxed">
+      <p>
+        <!-- TODO: replace with your real name + an optional photo before launch.
+             Named, real-person authorship is part of Google's E-E-A-T signal
+             and AdSense review — "the ToolOrbit team" reads as generic/AI-spun. -->
+        Hi, I'm <strong class="text-base-50">Tanvirul Gani Oyon</strong> — I built and maintain ToolOrbit by
+        myself, end to end: design, code, content, and the server bill.
+      </p>
+      <p>
+        I kept hitting the same wall as a developer: needing a quick JSON formatter or a UUID
+        generator, and landing on a site buried in pop-up ads, fake "download" buttons, and a
+        tool that secretly uploads your input to a server you didn't ask about. ToolOrbit exists
+        because that shouldn't be the bar.
+      </p>
+      <p>
+        Every tool on this site runs entirely in your browser. There's no backend processing your
+        input, no file upload, and no hidden network request — you can check this yourself by
+        opening your browser's network tab while using any tool here.
+      </p>
+      <p>
+        ToolOrbit is still early. It started with a focused set of developer tools, built one
+        module at a time, with PDF, image, and text tools following as each one is built properly
+        rather than rushed out as a thin wrapper around someone else's library.
+      </p>
+      <p>
+        If something's broken, missing, or could be better, the <a
+          href="/contact"
+          class="text-interactive hover:underline">contact page</a
+        > goes straight to me.
+      </p>
+    </div>
+  </div>
+</BaseLayout>

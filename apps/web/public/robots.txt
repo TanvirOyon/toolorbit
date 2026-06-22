@@ -1,0 +1,30 @@
+# ToolOrbit — deliberate crawler policy.
+# Search engines: welcome. AI training crawlers: blocked.
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# AI training / scraping crawlers — blocked on principle. ToolOrbit's tool
+# content and SEO copy is original work; it isn't offered as training data.
+User-agent: GPTBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
+
+User-agent: *
+Allow: /
+
+Sitemap: https://toolorbit.pages.dev/sitemap-index.xml

@@ -1,0 +1,108 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CategoryCard from '../components/CategoryCard.astro';
+import ToolCard from '../components/ToolCard.astro';
+import SearchTrigger from '../components/SearchTrigger.astro';
+import { CATEGORIES, getAllTools, getCategoryCounts } from '@toolorbit/tool-registry';
+import { ShieldCheck, Zap, Code2 } from 'lucide-react';
+
+const allTools = getAllTools();
+const counts = getCategoryCounts(CATEGORIES);
+const toolCount = allTools.length;
+
+// Up to 6 tools shown as quick-access cards on the homepage — never pad
+// this with placeholders if there aren't enough yet.
+const popularTools = allTools.slice(0, 6);
+---
+
+<BaseLayout
+  title="ToolOrbit — Free Online Tools That Run In Your Browser"
+  description={`${toolCount}+ free online tools for developers and everyday tasks. No uploads, no signup, no ads tracking your files — everything runs client-side.`}
+>
+  <!-- Hero -->
+  <section class="border-b border-base-700 bg-base-950 px-4 py-20 sm:px-6 sm:py-28">
+    <div class="mx-auto max-w-3xl text-center">
+      <h1 class="font-display text-4xl font-bold text-base-50 sm:text-5xl">
+        {toolCount}+ Free Online Tools
+      </h1>
+      <p class="mx-auto mt-4 max-w-xl text-base text-base-300 sm:text-lg">
+        Fast, focused utilities that run entirely in your browser. No file uploads, no waiting
+        on a server, no account required.
+      </p>
+
+      <div class="mx-auto mt-8 flex max-w-md justify-center">
+        <SearchTrigger />
+      </div>
+
+      <div
+        class="mx-auto mt-6 inline-flex items-center gap-2 rounded-full border border-interactive/20 bg-interactive-muted px-4 py-1.5 text-sm text-base-100"
+      >
+        <ShieldCheck size={15} className="text-interactive" aria-hidden="true" />
+        Your files never leave your device
+      </div>
+    </div>
+  </section>
+
+  <!-- Category grid -->
+  <section class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+    <h2 class="mb-6 font-display text-2xl font-semibold text-base-50">Browse by category</h2>
+    <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+      {
+        CATEGORIES.map((category) => (
+          <CategoryCard category={category} toolCount={counts[category.slug] ?? 0} />
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- Popular tools -->
+  {
+    popularTools.length > 0 && (
+      <section class="mx-auto max-w-6xl px-4 pb-16 sm:px-6">
+        <h2 class="mb-6 font-display text-2xl font-semibold text-base-50">Popular tools</h2>
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {popularTools.map((tool) => (
+            <ToolCard tool={tool} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <!-- Trust section -->
+  <section class="border-t border-base-700 bg-base-900 px-4 py-16 sm:px-6">
+    <div class="mx-auto max-w-6xl">
+      <h2 class="mb-8 text-center font-display text-2xl font-semibold text-base-50">
+        Built around your privacy
+      </h2>
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+        <div class="rounded-xl border border-base-700 bg-base-950 p-6">
+          <ShieldCheck size={22} className="mb-3 text-interactive" aria-hidden="true" />
+          <h3 class="mb-1 font-display font-semibold text-base-50">Client-side processing</h3>
+          <p class="text-sm text-base-400">
+            Every tool runs entirely in your browser using JavaScript built into the web
+            platform. Nothing you type or upload is ever sent to a server.
+          </p>
+        </div>
+        <div class="rounded-xl border border-base-700 bg-base-950 p-6">
+          <Zap size={22} className="mb-3 text-interactive" aria-hidden="true" />
+          <h3 class="mb-1 font-display font-semibold text-base-50">No uploads, no waiting</h3>
+          <p class="text-sm text-base-400">
+            Results appear instantly because there's no network round trip — no upload progress
+            bar, no server queue, no rate limit.
+          </p>
+        </div>
+        <div class="rounded-xl border border-base-700 bg-base-950 p-6">
+          <Code2 size={22} className="mb-3 text-interactive" aria-hidden="true" />
+          <h3 class="mb-1 font-display font-semibold text-base-50">Built in the open</h3>
+          <p class="text-sm text-base-400">
+            ToolOrbit is built by a solo developer who actually uses these tools daily — see the
+            About page for the full story.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

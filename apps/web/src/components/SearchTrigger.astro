@@ -1,0 +1,28 @@
+---
+import { Search } from 'lucide-react';
+---
+
+<button
+  type="button"
+  id="search-trigger"
+  class="flex h-9 w-full max-w-xs items-center gap-2 rounded-md border border-base-700 bg-base-900 px-3 text-sm text-base-400 transition-colors hover:border-base-600 hover:text-base-200 sm:w-64"
+  aria-label="Search tools"
+>
+  <Search size={15} aria-hidden="true" />
+  <span class="flex-1 text-left">Search tools…</span>
+  <kbd
+    class="hidden rounded border border-base-600 bg-base-800 px-1.5 py-0.5 font-mono text-[10px] text-base-400 sm:inline-block"
+  >
+    ⌘K
+  </kbd>
+</button>
+
+<script>
+  // Dispatched globally; the CommandPalette island (hydrated client:idle)
+  // listens for this so the trigger button itself stays JS-free until
+  // someone actually opens search.
+  const trigger = document.getElementById('search-trigger');
+  trigger?.addEventListener('click', () => {
+    window.dispatchEvent(new CustomEvent('toolorbit:open-search'));
+  });
+</script>

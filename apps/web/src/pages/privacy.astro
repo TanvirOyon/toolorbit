@@ -1,0 +1,69 @@
+---
+export const prerender = true;
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Privacy Policy — ToolOrbit"
+  description="ToolOrbit's privacy policy: what data is and isn't collected, why every tool processes data client-side, and what analytics are in use."
+  canonicalPath="/privacy"
+>
+  <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6">
+    <h1 class="font-display text-3xl font-bold text-base-50 sm:text-4xl">Privacy Policy</h1>
+    <p class="mt-2 text-sm text-base-400">Last updated: June 2026</p>
+
+    <div class="mt-8 space-y-6 text-base-200 leading-relaxed">
+      <section>
+        <h2 class="mb-2 font-display text-lg font-semibold text-base-50">
+          How the tools process your data
+        </h2>
+        <p>
+          Every tool on ToolOrbit runs entirely client-side, in your browser, using standard
+          JavaScript and Web APIs (such as the Web Crypto API for hashing). The text, files, or
+          values you enter into a tool are never uploaded, transmitted to, or stored on any
+          ToolOrbit server. Once you close or navigate away from a tool's page, whatever you
+          entered is gone — nothing was sent anywhere to begin with.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="mb-2 font-display text-lg font-semibold text-base-50">What we do collect</h2>
+        <p>
+          ToolOrbit uses privacy-respecting analytics (Cloudflare Web Analytics) to understand
+          aggregate traffic — which pages are visited, roughly how many people use the site, and
+          basic technical details like browser type. This analytics method does not use cookies
+          and does not track individuals across sites. We do not run third-party tracking
+          scripts, fingerprinting, or cross-site advertising pixels.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="mb-2 font-display text-lg font-semibold text-base-50">Local storage</h2>
+        <p>
+          Some preferences — like your dark/light theme choice — are saved in your browser's
+          local storage so they persist between visits. This data stays on your device and is
+          never transmitted to ToolOrbit or any third party.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="mb-2 font-display text-lg font-semibold text-base-50">Advertising</h2>
+        <p>
+          ToolOrbit may display ads in the future to cover hosting costs. If and when ads are
+          added, this policy will be updated with full disclosure of which ad network is used and
+          what data it collects, before any ads go live.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="mb-2 font-display text-lg font-semibold text-base-50">Contact</h2>
+        <p>
+          Questions about this policy can be sent through the <a
+            href="/contact"
+            class="text-interactive hover:underline">contact page</a
+          >.
+        </p>
+      </section>
+    </div>
+  </div>
+</BaseLayout>

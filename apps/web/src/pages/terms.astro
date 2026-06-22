@@ -1,0 +1,64 @@
+---
+export const prerender = true;
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Terms of Service — ToolOrbit"
+  description="Terms of service for using ToolOrbit's free online tools."
+  canonicalPath="/terms"
+>
+  <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6">
+    <h1 class="font-display text-3xl font-bold text-base-50 sm:text-4xl">Terms of Service</h1>
+    <p class="mt-2 text-sm text-base-400">Last updated: June 2026</p>
+
+    <div class="mt-8 space-y-6 text-base-200 leading-relaxed">
+      <section>
+        <h2 class="mb-2 font-display text-lg font-semibold text-base-50">Use of the service</h2>
+        <p>
+          ToolOrbit provides free, browser-based utility tools "as is," without warranty of any
+          kind. You're free to use these tools for personal or commercial purposes. You agree not
+          to use ToolOrbit to violate any applicable law, to attempt to disrupt or overload the
+          site, or to scrape or republish the site's content wholesale.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="mb-2 font-display text-lg font-semibold text-base-50">No warranty</h2>
+        <p>
+          Tools are provided without guarantee of accuracy, availability, or fitness for any
+          particular purpose. You are responsible for verifying output before relying on it for
+          anything important — for example, double-checking a generated hash or a decoded token
+          before using it in a production system.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="mb-2 font-display text-lg font-semibold text-base-50">Limitation of liability</h2>
+        <p>
+          ToolOrbit and its operator are not liable for any damages, direct or indirect, arising
+          from your use of (or inability to use) the tools on this site.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="mb-2 font-display text-lg font-semibold text-base-50">Changes to these terms</h2>
+        <p>
+          These terms may be updated as the site evolves — for example, as new tools, accounts,
+          or paid features are introduced. Continued use of the site after a change constitutes
+          acceptance of the updated terms.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="mb-2 font-display text-lg font-semibold text-base-50">Contact</h2>
+        <p>
+          Questions about these terms can be sent through the <a
+            href="/contact"
+            class="text-interactive hover:underline">contact page</a
+          >.
+        </p>
+      </section>
+    </div>
+  </div>
+</BaseLayout>

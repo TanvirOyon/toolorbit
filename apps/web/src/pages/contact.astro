@@ -1,0 +1,34 @@
+---
+export const prerender = true;
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Contact ToolOrbit"
+  description="Get in touch with ToolOrbit — bug reports, tool requests, or general feedback."
+  canonicalPath="/contact"
+>
+  <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6">
+    <h1 class="font-display text-3xl font-bold text-base-50 sm:text-4xl">Contact</h1>
+
+    <div class="mt-8 space-y-5 text-base-200 leading-relaxed">
+      <p>
+        Found a bug, have a tool request, or just want to say something didn't work the way you
+        expected? Reach out directly:
+      </p>
+      <p>
+        <!-- TODO: replace with your real contact email before launch -->
+        <a
+          href="mailto:tanviroyon001@gmail.com"
+          class="text-lg font-medium text-interactive hover:underline"
+        >
+          tanviroyon001@gmail.com
+        </a>
+      </p>
+      <p class="text-sm text-base-400">
+        A proper contact form with spam protection (Cloudflare Turnstile) is planned for a later
+        phase — for now, email is the fastest way to reach me.
+      </p>
+    </div>
+  </div>
+</BaseLayout>
