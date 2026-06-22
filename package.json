@@ -7,7 +7,8 @@
   },
   "scripts": {
     "dev": "pnpm --filter web dev",
-    "build": "pnpm --filter web build",
+    "build": "corepack pnpm --filter web build",
+    "postbuild": "node ./scripts/prepare-pages-dist.mjs",
     "preview": "pnpm --filter web preview",
     "lint": "pnpm -r --if-present lint",
     "test": "pnpm -r --if-present test",

@@ -52,6 +52,7 @@ all present in the output.
 
 1. **`apps/web/src/pages/about.astro`** — updated to use your real name, Tanvirul Gani Oyon, for AdSense and E-E-A-T.
 2. **`apps/web/src/pages/contact.astro`** — updated to use `tanviroyon001@gmail.com`.
+
 ## Known issues found and fixed during the build (read this before touching the Cloudflare config)
 
 Three real bugs surfaced only when actually running `astro build` against this Astro 6.4.8 /
@@ -90,9 +91,9 @@ For Phase 0 (pure static, no D1/KV/auth yet):
 
 1. Push this repo to GitHub.
 2. In the Cloudflare dashboard, connect Pages to the repo.
-3. Build command: `pnpm --filter web build`
-4. Build output directory: `apps/web/dist/client` (not `apps/web/dist` — the adapter splits
-   server/client output into subfolders, and `client/` is the deployable one)
+3. Build command: `npm run build`
+4. Build output directory: `dist` (the root `postbuild` step mirrors `apps/web/dist/client` into
+   `dist` for Pages)
 5. SSL and the `*.pages.dev` subdomain are automatic. Attach your real domain when ready, then
    update `SITE_URL` in `astro.config.mjs` and `apps/web/src/lib/seo.ts`.
 
