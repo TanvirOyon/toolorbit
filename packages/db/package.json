@@ -1,0 +1,17 @@
+{
+  "name": "@toolorbit/db",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.38.0"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.29.0"
+  }
+}

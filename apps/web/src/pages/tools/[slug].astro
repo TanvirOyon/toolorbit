@@ -1,94 +1,153 @@
 ---
-export const prerender = true; // keeps every tool page off the Workers quota entirely
+export const prerender = true;
 
 import ToolLayout from '../../layouts/ToolLayout.astro';
 import ToolCard from '../../components/ToolCard.astro';
 import { getAllTools, getToolBySlug, getRelatedTools } from '@toolorbit/tool-registry';
 
-// Astro's compiler needs the literal, statically-imported identifier right
-// at the `<Component client:directive />` usage site to wire up
-// client-side hydration — a component resolved indirectly (a variable
-// reassigned via object/dynamic-import lookup) silently fails to hydrate.
-// This is a known core Astro limitation (see withastro/astro#11701), not
-// specific to the Cloudflare adapter. So: import every tool island
-// statically here, and pick the right one with a plain string-equality
-// conditional chain below, instead of a dynamic import/lookup map.
-//
-// When a new tools-* module ships, add its components to both this import
-// block and the conditional chain in the template — everything else in
-// the registry/page-generation pipeline stays untouched.
-import JsonFormatter from '../../islands/tools/JsonFormatter';
-import JsonMinifier from '../../islands/tools/JsonMinifier';
-import Base64Codec from '../../islands/tools/Base64Codec';
-import UrlCodec from '../../islands/tools/UrlCodec';
-import UuidGenerator from '../../islands/tools/UuidGenerator';
-import PasswordGenerator from '../../islands/tools/PasswordGenerator';
-import HashGenerator from '../../islands/tools/HashGenerator';
-import RegexTester from '../../islands/tools/RegexTester';
-import JwtDecoder from '../../islands/tools/JwtDecoder';
+// ─── STATIC IMPORT REQUIREMENT ───────────────────────────────────────────────
+// Astro's compiler resolves `client:*` hydration at BUILD TIME from the
+// literal identifier at the usage site. A dynamic import() or an object-map
+// lookup silently fails to ship the hydration manifest. So every island must
+// be imported statically here, and selected with a string-equality chain below.
+// New tool module shipped → add its imports here + one condition per component.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Phase 0 — Developer Tools
+import JsonFormatter       from '../../islands/tools/JsonFormatter';
+import JsonMinifier        from '../../islands/tools/JsonMinifier';
+import Base64Codec         from '../../islands/tools/Base64Codec';
+import UrlCodec            from '../../islands/tools/UrlCodec';
+import UuidGenerator       from '../../islands/tools/UuidGenerator';
+import PasswordGenerator   from '../../islands/tools/PasswordGenerator';
+import HashGenerator       from '../../islands/tools/HashGenerator';
+import RegexTester         from '../../islands/tools/RegexTester';
+import JwtDecoder          from '../../islands/tools/JwtDecoder';
 import LoremIpsumGenerator from '../../islands/tools/LoremIpsumGenerator';
+
+// Phase 1 — PDF Tools
+import PdfMerge    from '../../islands/tools/PdfMerge';
+import PdfSplit    from '../../islands/tools/PdfSplit';
+import PdfCompress from '../../islands/tools/PdfCompress';
+import PdfRotate   from '../../islands/tools/PdfRotate';
+import PdfToImages from '../../islands/tools/PdfToImages';
+import ImagesToPdf from '../../islands/tools/ImagesToPdf';
+import PdfWatermark from '../../islands/tools/PdfWatermark';
+import PdfReorder  from '../../islands/tools/PdfReorder';
+
+// Phase 1 — Image Tools
+import ImageConvert    from '../../islands/tools/ImageConvert';
+import ImageCompress   from '../../islands/tools/ImageCompress';
+import ImageResizeCrop from '../../islands/tools/ImageResizeCrop';
+import ImageRotateFlip from '../../islands/tools/ImageRotateFlip';
+import ImageWatermark  from '../../islands/tools/ImageWatermark';
+import ImageToBase64   from '../../islands/tools/ImageToBase64';
+
+// Phase 1 — Text Tools
+import WordCounter         from '../../islands/tools/WordCounter';
+import CaseConverter       from '../../islands/tools/CaseConverter';
+import DuplicateLineRemover from '../../islands/tools/DuplicateLineRemover';
+import TextDiff            from '../../islands/tools/TextDiff';
+import StringReverse       from '../../islands/tools/StringReverse';
+import WhitespaceRemover   from '../../islands/tools/WhitespaceRemover';
+
+// Phase 1 — Calculators
+import GpaCalculator        from '../../islands/tools/GpaCalculator';
+import ScientificCalculator from '../../islands/tools/ScientificCalculator';
+import PercentageCalculator from '../../islands/tools/PercentageCalculator';
+import BmiCalculator        from '../../islands/tools/BmiCalculator';
+import AgeCalculator        from '../../islands/tools/AgeCalculator';
+import DateDiffCalculator   from '../../islands/tools/DateDiffCalculator';
 
 export function getStaticPaths() {
   return getAllTools().map((tool) => ({
     params: { slug: tool.slug },
-    props: { tool },
+    props:  { tool },
   }));
 }
 
 const { tool } = Astro.props;
-const related = getRelatedTools(tool);
+const related  = getRelatedTools(tool);
 ---
 
 <ToolLayout tool={tool}>
-  <!-- The actual interactive tool widget. Exactly one of these renders per
-       page — see the static-import note above for why this can't be a
-       single dynamically-resolved <ToolComponent />. -->
-  {tool.component === 'JsonFormatter' && <JsonFormatter client:idle />}
-  {tool.component === 'JsonMinifier' && <JsonMinifier client:idle />}
-  {tool.component === 'Base64Codec' && <Base64Codec client:idle />}
-  {tool.component === 'UrlCodec' && <UrlCodec client:idle />}
-  {tool.component === 'UuidGenerator' && <UuidGenerator client:idle />}
-  {tool.component === 'PasswordGenerator' && <PasswordGenerator client:idle />}
-  {tool.component === 'HashGenerator' && <HashGenerator client:idle />}
-  {tool.component === 'RegexTester' && <RegexTester client:idle />}
-  {tool.component === 'JwtDecoder' && <JwtDecoder client:idle />}
+  <!-- Phase 0 — Developer Tools -->
+  {tool.component === 'JsonFormatter'       && <JsonFormatter       client:idle />}
+  {tool.component === 'JsonMinifier'        && <JsonMinifier        client:idle />}
+  {tool.component === 'Base64Codec'         && <Base64Codec         client:idle />}
+  {tool.component === 'UrlCodec'            && <UrlCodec            client:idle />}
+  {tool.component === 'UuidGenerator'       && <UuidGenerator       client:idle />}
+  {tool.component === 'PasswordGenerator'   && <PasswordGenerator   client:idle />}
+  {tool.component === 'HashGenerator'       && <HashGenerator       client:idle />}
+  {tool.component === 'RegexTester'         && <RegexTester         client:idle />}
+  {tool.component === 'JwtDecoder'          && <JwtDecoder          client:idle />}
   {tool.component === 'LoremIpsumGenerator' && <LoremIpsumGenerator client:idle />}
 
-  <!-- SEO content: 300+ word unique article -->
+  <!-- Phase 1 — PDF Tools -->
+  {tool.component === 'PdfMerge'     && <PdfMerge     client:idle />}
+  {tool.component === 'PdfSplit'     && <PdfSplit      client:idle />}
+  {tool.component === 'PdfCompress'  && <PdfCompress   client:idle />}
+  {tool.component === 'PdfRotate'    && <PdfRotate     client:idle />}
+  {tool.component === 'PdfToImages'  && <PdfToImages   client:load />}
+  {tool.component === 'ImagesToPdf'  && <ImagesToPdf   client:idle />}
+  {tool.component === 'PdfWatermark' && <PdfWatermark  client:idle />}
+  {tool.component === 'PdfReorder'   && <PdfReorder    client:idle />}
+
+  <!-- Phase 1 — Image Tools -->
+  {tool.component === 'ImageConvert'    && <ImageConvert    client:idle />}
+  {tool.component === 'ImageCompress'   && <ImageCompress   client:idle />}
+  {tool.component === 'ImageResizeCrop' && <ImageResizeCrop client:idle />}
+  {tool.component === 'ImageRotateFlip' && <ImageRotateFlip client:idle />}
+  {tool.component === 'ImageWatermark'  && <ImageWatermark  client:idle />}
+  {tool.component === 'ImageToBase64'   && <ImageToBase64   client:idle />}
+
+  <!-- Phase 1 — Text Tools -->
+  {tool.component === 'WordCounter'          && <WordCounter          client:idle />}
+  {tool.component === 'CaseConverter'        && <CaseConverter        client:idle />}
+  {tool.component === 'DuplicateLineRemover' && <DuplicateLineRemover client:idle />}
+  {tool.component === 'TextDiff'             && <TextDiff             client:idle />}
+  {tool.component === 'StringReverse'        && <StringReverse        client:idle />}
+  {tool.component === 'WhitespaceRemover'    && <WhitespaceRemover    client:idle />}
+
+  <!-- Phase 1 — Calculators -->
+  {tool.component === 'GpaCalculator'        && <GpaCalculator        client:idle />}
+  {tool.component === 'ScientificCalculator' && <ScientificCalculator client:idle />}
+  {tool.component === 'PercentageCalculator' && <PercentageCalculator client:idle />}
+  {tool.component === 'BmiCalculator'        && <BmiCalculator        client:idle />}
+  {tool.component === 'AgeCalculator'        && <AgeCalculator        client:idle />}
+  {tool.component === 'DateDiffCalculator'   && <DateDiffCalculator   client:idle />}
+
+  <!-- SEO content -->
   <article class="tool-content mt-10">
     <Fragment set:html={tool.seo.content} />
   </article>
 
-  <!-- FAQ section with FAQPage schema (JSON-LD emitted in ToolLayout) -->
+  <!-- FAQ section -->
   <section class="mt-10 border-t border-base-700 pt-8">
     <h2 class="mb-4 font-display text-xl font-semibold text-base-50">
       Frequently asked questions
     </h2>
     <div class="space-y-2">
-      {
-        tool.seo.faq.map((entry) => (
-          <details class="group rounded-lg border border-base-700 bg-base-900 px-4 py-3 open:bg-base-800/50">
-            <summary class="cursor-pointer list-none text-sm font-medium text-base-100 marker:content-none">
-              {entry.q}
-            </summary>
-            <p class="mt-2 text-sm text-base-300">{entry.a}</p>
-          </details>
-        ))
-      }
+      {tool.seo.faq.map((entry) => (
+        <details class="group rounded-lg border border-base-700 bg-base-900 px-4 py-3 open:bg-base-800/50">
+          <summary class="cursor-pointer list-none text-sm font-medium text-base-100 marker:content-none">
+            {entry.q}
+          </summary>
+          <p class="mt-2 text-sm text-base-300">{entry.a}</p>
+        </details>
+      ))}
     </div>
   </section>
 
-  <!-- Related tools mesh -->
-  {
-    related.length > 0 && (
-      <nav class="mt-10 border-t border-base-700 pt-8" aria-label="Related tools">
-        <h2 class="mb-4 font-display text-xl font-semibold text-base-50">Related tools</h2>
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {related.map((relatedTool) => (
-            <ToolCard tool={relatedTool} />
-          ))}
-        </div>
-      </nav>
-    )
-  }
+  <!-- Related tools -->
+  {related.length > 0 && (
+    <nav class="mt-10 border-t border-base-700 pt-8" aria-label="Related tools">
+      <h2 class="mb-4 font-display text-xl font-semibold text-base-50">Related tools</h2>
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {related.map((relatedTool) => (
+          <ToolCard tool={relatedTool} />
+        ))}
+      </div>
+    </nav>
+  )}
 </ToolLayout>

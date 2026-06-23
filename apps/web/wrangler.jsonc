@@ -4,23 +4,27 @@
   "compatibility_date": "2026-06-01",
   "compatibility_flags": ["nodejs_compat"],
 
-  // Phase 0 needs NO wrangler config at all - `astro build` auto-generates
-  // a working wrangler.json inside dist/client/ with the correct settings
-  // for a pure static deploy. This file exists as a place to add real
-  // bindings once Phase 1 needs them, e.g.:
-  //
-  // "d1_databases": [
-  //   { "binding": "DB", "database_name": "toolorbit", "database_id": "<id>" }
-  // ],
+  // Phase 1 — D1 database binding for better-auth + user favorites.
+  // Steps to provision:
+  //   1. npx wrangler d1 create toolorbit
+  //   2. Copy the returned `database_id` into the value below.
+  //   3. Run the migration: npx wrangler d1 execute toolorbit --file=migrations/0001_init.sql
+  //   4. For local dev: wrangler reads this file and proxies D1 via platformProxy.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "toolorbit",
+      "database_id": "f24f3fb3-4fcd-4419-b1f8-40a58e67744a"
+    }
+  ]
+
+  // Optional KV namespace for rate-limiting (Phase 2):
   // "kv_namespaces": [
-  //   { "binding": "RATE_LIMIT_KV", "id": "<id>" }
+  //   { "binding": "RATE_LIMIT_KV", "id": "REPLACE_WITH_KV_ID" }
   // ]
-  //
-  // IMPORTANT: do NOT add "pages_build_output_dir" here. With
-  // @astrojs/cloudflare 13.7.x, that field forces wrangler into strict
-  // "Pages mode" validation, which then rejects the adapter's own
-  // internally-generated "ASSETS" binding name as reserved - breaking
-  // `astro build` entirely. See README.md "Known Issues" for the full
-  // writeup. Keep deployment output handling in the repo root build step,
-  // not in this file.
+
+  // IMPORTANT: do NOT add "pages_build_output_dir" here.
+  // @astrojs/cloudflare generates this internally. Adding it causes wrangler
+  // to reject the adapter's "ASSETS" binding name as reserved, breaking the
+  // build entirely. Leave output path handling to the root build step.
 }
