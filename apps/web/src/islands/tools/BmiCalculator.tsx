@@ -11,7 +11,7 @@ const CATEGORIES: Category[] = [
   { label: 'Obese',       range: '≥ 30.0',    color: '#f87171' },
 ];
 
-function getCategory(bmi: number): Category {
+export function getCategory(bmi: number): Category {
   if (bmi < 18.5) return CATEGORIES[0];
   if (bmi < 25)   return CATEGORIES[1];
   if (bmi < 30)   return CATEGORIES[2];

@@ -3,7 +3,7 @@ import { ToolShell, ToolShellSection } from '@toolorbit/ui';
 
 interface Stats { words: number; chars: number; charsNoSpace: number; sentences: number; paragraphs: number; readingTime: string }
 
-function analyze(text: string): Stats {
+export function analyze(text: string): Stats {
   const words = text.trim() ? text.trim().split(/\s+/).filter(Boolean).length : 0;
   const chars = text.length;
   const charsNoSpace = text.replace(/\s/g, '').length;

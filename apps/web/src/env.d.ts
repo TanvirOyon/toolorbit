@@ -27,5 +27,12 @@ declare namespace Cloudflare {
     GOOGLE_CLIENT_SECRET?: string;
     GITHUB_CLIENT_ID?: string;
     GITHUB_CLIENT_SECRET?: string;
+    NODE_ENV?: string;
+    // Cloudflare's native Rate Limiting binding (free-plan compatible,
+    // zero extra infra - no KV/D1 writes needed). Declared here so
+    // `env.AUTH_RATE_LIMITER.limit()` type-checks. See wrangler.jsonc for
+    // the binding config and src/lib/rate-limit.ts for usage.
+    AUTH_RATE_LIMITER: RateLimit;
+    API_RATE_LIMITER: RateLimit;
   }
 }

@@ -1,0 +1,44 @@
+name: CI
+
+# Runs on every push and PR. This is intentionally minimal - its only job
+# is to catch "the site doesn't build" or "a tool's logic is broken"
+# before it reaches Cloudflare, not to be a full test-coverage gate.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Type check
+        run: pnpm --filter web type-check
+
+      - name: Unit tests
+        run: pnpm --filter web test
+
+      - name: Build
+        run: pnpm build
+        env:
+          # Dummy values so `astro build` succeeds in CI - real secrets are
+          # only needed at runtime (via `wrangler secret put`), not at
+          # build time, since createAuth() is called per-request, not at
+          # build time. This just keeps any accidental build-time env
+          # reads from crashing the CI build.
+          BETTER_AUTH_SECRET: ci-build-placeholder-not-used-at-runtime

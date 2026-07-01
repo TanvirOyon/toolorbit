@@ -21,12 +21,27 @@
       "database_name": "toolorbit",
       "database_id": "REPLACE_WITH_YOUR_D1_DATABASE_ID"
     }
-  ]
+  ],
 
-  // KV for rate-limiting (Phase 2, not yet wired into app code):
-  // "kv_namespaces": [
-  //   { "binding": "RATE_LIMIT_KV", "id": "REPLACE_WITH_KV_ID" }
-  // ]
+  // Cloudflare's native Rate Limiting binding - no provisioning step needed
+  // (unlike D1/KV, `namespace_id` here is just an arbitrary integer you pick
+  // yourself to keep the two limiters distinct within this Worker; it is
+  // NOT a resource you create in the dashboard first). Works on the
+  // Workers Free plan. See src/lib/rate-limit.ts for usage.
+  //   AUTH_RATE_LIMITER: guards /api/auth/* (login/signup) - 20 req/min/IP.
+  //   API_RATE_LIMITER:  guards /api/favorites, /api/usage - 30 req/min/user.
+  "ratelimits": [
+    {
+      "name": "AUTH_RATE_LIMITER",
+      "namespace_id": "1001",
+      "simple": { "limit": 20, "period": 60 }
+    },
+    {
+      "name": "API_RATE_LIMITER",
+      "namespace_id": "1002",
+      "simple": { "limit": 30, "period": 60 }
+    }
+  ]
 
   // NOTE on the SESSION KV binding you will see in apps/web/dist/server/wrangler.json
   // after building: @astrojs/cloudflare auto-wires Astro's own built-in astro:session

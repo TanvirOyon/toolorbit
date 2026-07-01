@@ -26,6 +26,30 @@ export type WorkerEnv = Cloudflare.Env;
  *   const auth = createAuth(env);
  *   const session = await auth.api.getSession({ headers: request.headers });
  */
+/**
+ * SECURITY: this must never silently fall back to a hardcoded secret in a
+ * deployed build. Better Auth signs session tokens with this value - if it
+ * ships as a public string sitting in the repo, anyone can forge a valid
+ * session for any user. `import.meta.env.DEV` is a compile-time flag (true
+ * only for `astro dev`, always false for `astro build`), so this only
+ * relaxes locally, never in the artifact that actually gets deployed.
+ *
+ * Set the real value with: wrangler secret put BETTER_AUTH_SECRET
+ * (generate one with: openssl rand -base64 32)
+ */
+function resolveAuthSecret(env: WorkerEnv): string {
+  if (env.BETTER_AUTH_SECRET) return env.BETTER_AUTH_SECRET;
+
+  if (import.meta.env.DEV) {
+    return 'toolorbit-dev-secret-change-in-prod';
+  }
+
+  throw new Error(
+    'BETTER_AUTH_SECRET is not set. Run `wrangler secret put BETTER_AUTH_SECRET` ' +
+      'before deploying - refusing to start with no secret in a production build.',
+  );
+}
+
 export function createAuth(env: WorkerEnv) {
   const db = drizzle(env.DB, { schema });
 
@@ -40,7 +64,7 @@ export function createAuth(env: WorkerEnv) {
       },
     }),
 
-    secret: env.BETTER_AUTH_SECRET ?? 'toolorbit-dev-secret-change-in-prod',
+    secret: resolveAuthSecret(env),
 
     socialProviders: {
       google: {

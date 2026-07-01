@@ -151,6 +151,7 @@ OAuth trusted-origin checks, not the deploy itself.
 
 ```bash
 cd apps/web
+pnpm test   # runs the tool-logic unit tests (should print "20 passed")
 pnpm dev
 ```
 
@@ -228,6 +229,12 @@ called Workers Builds:
 If you skip this step, `pnpm deploy` from your own machine works exactly
 the same way - this step only adds CI/CD on top.
 
+Separately, `.github/workflows/ci.yml` already runs on every push/PR
+regardless of whether you set up Workers Builds - it type-checks, runs the
+unit tests, and builds (but does not deploy). Its only job is to fail loudly
+in the GitHub Actions tab if a change breaks the build or a tool's logic,
+before you find out from a live 500 error instead.
+
 ---
 
 ## Step 13 - Cloudflare Web Analytics
@@ -263,6 +270,8 @@ After your custom domain is live:
 - [ ] Mobile menu (hamburger) opens correctly on a narrow viewport
 - [ ] Command palette (Ctrl+K) searches and navigates correctly
 - [ ] Google Search Console shows the sitemap submitted with 0 errors
+- [ ] Open the browser console on the homepage AND on one tool from each category (PDF, image, dev, calculator, text, SEO) - zero red `Content-Security-Policy` violation errors. If you see one, it names the exact blocked resource; add its origin to the CSP in `apps/web/public/_headers` and redeploy.
+- [ ] Set `BETTER_AUTH_SECRET` as a real Worker secret (Step 7) BEFORE this deploy goes live with any real traffic - the app will now refuse to boot in production without it (see `apps/web/src/lib/auth.ts`), which is intentional
 
 ---
 
@@ -277,6 +286,7 @@ After your custom domain is live:
 | D1 storage | 5GB | The current schema uses a tiny fraction of a percent of this. |
 | KV reads/writes | 100,000 reads, 1,000 writes per day | The unused `SESSION` namespace adds zero load since nothing reads or writes it. |
 | Worker script size | 10MB compressed (free and paid) | This build is 662KB gzipped - about 6.6% of the limit, with substantial headroom for adding more tool modules. |
+| Rate Limiting bindings | No separate quota - free plan compatible | `AUTH_RATE_LIMITER` (20 req/min/IP on `/api/auth/*`) and `API_RATE_LIMITER` (30 req/min/user on `/api/favorites`, `/api/usage`) run entirely at Cloudflare's edge - they don't consume D1/KV quota and need no dashboard provisioning, just the config already in `wrangler.jsonc`. |
 
 ---
 

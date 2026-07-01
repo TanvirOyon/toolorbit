@@ -3,6 +3,17 @@
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'
+  # ^ Tuned for this stack: pdf-lib/pdfjs-dist run as same-origin bundled
+  # workers (worker-src 'self' + blob: covers pdf.js's occasional blob-URL
+  # worker instantiation). style-src allows 'unsafe-inline' because Astro
+  # emits some scoped component styles inline - if you later remove all
+  # inline <style> usage this can be tightened further with a nonce.
+  # If deploying a NEW tool that loads a script/image/font from a
+  # third-party CDN, you MUST add that origin here or it will be silently
+  # blocked - check the browser console for CSP violation warnings after
+  # each deploy, especially the first one.
 
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable

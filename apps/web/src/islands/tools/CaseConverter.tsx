@@ -6,7 +6,7 @@ type CaseType = 'upper' | 'lower' | 'title' | 'sentence' | 'camel' | 'pascal' | 
 
 const SMALL_WORDS = new Set(['a','an','the','and','but','or','for','nor','on','at','to','by','in','of','up','as','is','it']);
 
-function convert(text: string, type: CaseType): string {
+export function convert(text: string, type: CaseType): string {
   switch (type) {
     case 'upper': return text.toUpperCase();
     case 'lower': return text.toLowerCase();

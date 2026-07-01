@@ -14,15 +14,30 @@ import { createAuth } from '../../lib/auth';
 import { drizzle } from 'drizzle-orm/d1';
 import { usageHistory } from '@toolorbit/db';
 import { eq, asc, count } from 'drizzle-orm';
+import { checkRateLimit, tooManyRequests } from '../../lib/rate-limit';
 
 export const POST: APIRoute = async ({ request }) => {
   const auth = createAuth(env);
   const session = await auth.api.getSession({ headers: request.headers });
   if (!session) return new Response(null, { status: 401 });
 
-  const body = (await request.json()) as { slug?: string };
-  const slug = body?.slug;
-  if (!slug || typeof slug !== 'string') return new Response('Bad Request', { status: 400 });
+  // This fires on every tool page load for logged-in users - it's the
+  // highest-frequency write endpoint in the app, so it gets its own guard
+  // against a runaway client (buggy retry loop, malicious script) burning
+  // through the D1 free tier's 100k writes/day.
+  const allowed = await checkRateLimit(env.API_RATE_LIMITER, session.user.id);
+  if (!allowed) return tooManyRequests();
+
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return Response.json({ error: 'Invalid JSON body' }, { status: 400 });
+  }
+  const slug = (body as { slug?: unknown })?.slug;
+  if (!slug || typeof slug !== 'string') {
+    return Response.json({ error: '`slug` is required' }, { status: 400 });
+  }
 
   const db = drizzle(env.DB);
 

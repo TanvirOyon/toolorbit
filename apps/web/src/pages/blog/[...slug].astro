@@ -3,7 +3,8 @@ export const prerender = true;
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import { buildBreadcrumbJsonLd, absoluteUrl } from '../../lib/seo';
+import { buildBreadcrumbJsonLd, buildOrganizationJsonLd, absoluteUrl } from '../../lib/seo';
+import { SITE_NAME } from '../../lib/config';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -26,13 +27,19 @@ const breadcrumbItems = [
 
 const articleJsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'Article',
+  '@type': 'BlogPosting',
   headline: post.data.title,
   description: post.data.description,
   url: absoluteUrl(`/blog/${post.id}`),
   datePublished: post.data.publishDate,
   dateModified: post.data.updatedDate ?? post.data.publishDate,
   author: { '@type': 'Person', name: post.data.author },
+  // Google's structured data guidelines treat Article/BlogPosting without
+  // these three as incomplete for rich-result eligibility (Search Console
+  // will flag "missing field" warnings otherwise).
+  publisher: { ...buildOrganizationJsonLd(), '@type': 'Organization', name: SITE_NAME },
+  mainEntityOfPage: { '@type': 'WebPage', '@id': absoluteUrl(`/blog/${post.id}`) },
+  image: absoluteUrl('/og-default.png'),
 };
 ---
 
