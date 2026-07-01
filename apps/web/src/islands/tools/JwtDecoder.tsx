@@ -41,7 +41,7 @@ export default function JwtDecoder() {
         error: null,
       };
     } catch {
-      return { decoded: null, error: 'Could not decode — header or payload isn\u2019t valid Base64URL-encoded JSON.' };
+      return { decoded: null, error: 'Could not decode - header or payload isn\u2019t valid Base64URL-encoded JSON.' };
     }
   }, [token]);
 

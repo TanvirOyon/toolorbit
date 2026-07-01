@@ -10,7 +10,7 @@ export const toolSeoSchema = z.object({
   description: z.string().min(50).max(160),
   keywords: z.array(z.string()).min(3),
   faq: z.array(toolFaqSchema).min(2),
-  content: z.string().min(300),
+  content: z.string().min(600),
 });
 
 export const toolDefinitionSchema = z.object({
@@ -30,7 +30,7 @@ export type ToolDefinitionInput = z.infer<typeof toolDefinitionSchema>;
 /**
  * Validates a full list of tool definitions and throws a single, readable
  * error listing every failure (slug + path) instead of failing on the
- * first one — far less painful when a content pass touches 30 tools at once.
+ * first one - far less painful when a content pass touches 30 tools at once.
  */
 export function validateToolDefinitions(tools: unknown[]): void {
   const errors: string[] = [];

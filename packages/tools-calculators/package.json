@@ -9,6 +9,6 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@toolorbit/tool-registry": "workspace:*"
+    "@toolorbit/tool-types": "workspace:*"
   }
 }

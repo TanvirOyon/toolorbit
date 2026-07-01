@@ -5,7 +5,7 @@ import { ListOrdered, GripVertical, Trash2 } from 'lucide-react';
 interface PageItem { originalIndex: number; label: string }
 
 function downloadBytes(bytes: Uint8Array, filename: string) {
-  const blob = new Blob([bytes], { type: 'application/pdf' });
+  const blob = new Blob([bytes as unknown as BlobPart], { type: 'application/pdf' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a'); a.href = url; a.download = filename; a.click();
   URL.revokeObjectURL(url);
@@ -83,7 +83,7 @@ export default function PdfReorder() {
         <FileDropZone accept=".pdf,application/pdf" onFiles={loadFile}
           label="Drop a PDF here, or click to browse" hint="Files stay on your device" />
         {file && status === 'ready' && (
-          <p className="mt-1.5 text-xs text-base-400">{file.name} — {pages.length} pages remaining</p>
+          <p className="mt-1.5 text-xs text-base-400">{file.name} - {pages.length} pages remaining</p>
         )}
       </ToolShellSection>
 

@@ -8,7 +8,7 @@ interface PdfFile {
 }
 
 function downloadBytes(bytes: Uint8Array, filename: string) {
-  const blob = new Blob([bytes], { type: 'application/pdf' });
+  const blob = new Blob([bytes as unknown as BlobPart], { type: 'application/pdf' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
@@ -79,7 +79,7 @@ export default function PdfMerge() {
           multiple
           onFiles={addFiles}
           label="Drop PDF files here, or click to browse"
-          hint="Files stay on your device — nothing is uploaded"
+          hint="Files stay on your device - nothing is uploaded"
         />
         {items.length > 0 && (
           <ul className="mt-2 space-y-1.5">

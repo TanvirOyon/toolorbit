@@ -10,7 +10,7 @@ import type { CategoryDefinition } from '@toolorbit/tool-registry';
 
 export function getStaticPaths() {
   // Only generate a hub page for categories that actually have at least
-  // one live tool — never publish a thin/empty page for SEO purposes.
+  // one live tool - never publish a thin/empty page for SEO purposes.
   return CATEGORIES.filter((category) => getToolsByCategory(category.slug).length > 0).map(
     (category) => ({
       params: { category: category.slug },
@@ -32,8 +32,8 @@ const jsonLd = [
   buildBreadcrumbJsonLd(breadcrumbItems),
 ];
 
-const title = `${category.name} — ${tools.length} Free Online Tools | ToolOrbit`;
-const description = `${category.description} Browse all ${tools.length} ${category.name.toLowerCase()} on ToolOrbit — free, fast, and entirely client-side.`;
+const title = `${category.name} - ${tools.length} Free Online Tools | ToolOrbit`;
+const description = `${category.description} Browse all ${tools.length} ${category.name.toLowerCase()} on ToolOrbit - free, fast, and entirely client-side.`;
 ---
 
 <BaseLayout

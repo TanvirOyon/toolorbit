@@ -13,7 +13,7 @@ export interface IrisAnimationProps {
  * The signature ToolOrbit interaction: a ring that closes around content
  * while processing and snaps open with the amber "completion" color when
  * done. Falls back to a plain color swap when prefers-reduced-motion is set
- * (handled entirely in CSS via the .iris-ring class — see global.css).
+ * (handled entirely in CSS via the .iris-ring class - see global.css).
  */
 export function IrisAnimation({ state, size = 28, className }: IrisAnimationProps) {
   const radius = (size - 4) / 2;

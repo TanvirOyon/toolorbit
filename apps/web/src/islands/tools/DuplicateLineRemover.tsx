@@ -41,12 +41,12 @@ export default function DuplicateLineRemover() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <ToolShellSection label="Input">
           <textarea value={input} onChange={(e) => setInput(e.target.value)} rows={12}
-            placeholder="Paste lines here — duplicates are removed in real time…"
+            placeholder="Paste lines here - duplicates are removed in real time…"
             className="w-full rounded-lg border border-base-700 bg-base-900 p-3 text-sm text-base-100 placeholder:text-base-500 resize-none focus:outline-none focus:ring-1 focus:ring-interactive" />
           <p className="mt-1 text-xs text-base-400">{input.split('\n').length} lines</p>
         </ToolShellSection>
 
-        <ToolShellSection label={`Output${removed > 0 ? ` — ${removed} duplicate${removed !== 1 ? 's' : ''} removed` : ''}`}
+        <ToolShellSection label={`Output${removed > 0 ? ` - ${removed} duplicate${removed !== 1 ? 's' : ''} removed` : ''}`}
           action={output ? (
             <button type="button" onClick={copy}
               className="flex items-center gap-1 text-xs text-base-400 hover:text-base-200 transition-colors">

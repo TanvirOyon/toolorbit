@@ -53,10 +53,10 @@ export default function ImageToBase64() {
       <ToolShellSection label="Image">
         <FileDropZone accept="image/*" onFiles={encode}
           label="Drop an image here, or click to browse"
-          hint="Encoding runs locally — no upload" />
+          hint="Encoding runs locally - no upload" />
         {file && (
           <p className="mt-1.5 text-xs text-base-400">
-            {file.name} — original {fmtSize(file.size)} → encoded ~{fmtSize(Math.ceil(file.size * 1.37))}
+            {file.name} - original {fmtSize(file.size)} → encoded ~{fmtSize(Math.ceil(file.size * 1.37))}
           </p>
         )}
       </ToolShellSection>

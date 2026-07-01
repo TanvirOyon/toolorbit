@@ -5,104 +5,148 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import CategoryCard from '../components/CategoryCard.astro';
 import ToolCard from '../components/ToolCard.astro';
 import SearchTrigger from '../components/SearchTrigger.astro';
-import { CATEGORIES, getAllTools, getCategoryCounts } from '@toolorbit/tool-registry';
+import { CATEGORIES, getAllTools, getCategoryCounts, getToolBySlug } from '@toolorbit/tool-registry';
 import { ShieldCheck, Zap, Code2 } from 'lucide-react';
+import { buildOrganizationJsonLd } from '../lib/seo';
+import { SITE_NAME } from '../lib/config';
 
 const allTools = getAllTools();
 const counts = getCategoryCounts(CATEGORIES);
 const toolCount = allTools.length;
 
-// Up to 6 tools shown as quick-access cards on the homepage — never pad
-// this with placeholders if there aren't enough yet.
-const popularTools = allTools.slice(0, 6);
+// Curated popular tools - high-intent, high-search-volume slugs first
+const POPULAR_SLUGS = [
+  'pdf-merge', 'image-compress', 'json-formatter',
+  'pdf-compress', 'image-convert', 'word-counter',
+  'password-generator', 'base64-codec', 'pdf-split',
+  'hash-generator', 'meta-tag-generator', 'gpa-calculator',
+];
+const popularTools = POPULAR_SLUGS
+  .map(slug => getToolBySlug(slug))
+  .filter(Boolean)
+  .slice(0, 9);
+
+const orgJsonLd = buildOrganizationJsonLd();
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: SITE_NAME,
+  url: 'https://toolorbit.xyz',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: 'https://toolorbit.xyz/tools/{search_term_string}',
+    'query-input': 'required name=search_term_string',
+  },
+};
 ---
 
 <BaseLayout
-  title="ToolOrbit — Free Online Tools That Run In Your Browser"
-  description={`${toolCount}+ free online tools for developers and everyday tasks. No uploads, no signup, no ads tracking your files — everything runs client-side.`}
+  title="ToolOrbit - Free Online Tools That Run In Your Browser"
+  description={`${toolCount}+ free tools for PDF, image, text, and developer tasks. No uploads, no signup - everything runs client-side in your browser.`}
+  jsonLd={[orgJsonLd, websiteJsonLd]}
 >
   <!-- Hero -->
   <section class="border-b border-base-700 bg-base-950 px-4 py-20 sm:px-6 sm:py-28">
     <div class="mx-auto max-w-3xl text-center">
-      <h1 class="font-display text-4xl font-bold text-base-50 sm:text-5xl">
+      <div class="mb-5 inline-flex items-center gap-2 rounded-full border border-interactive/20 bg-interactive-muted px-3 py-1 text-xs font-medium text-interactive">
+        <ShieldCheck size={13} aria-hidden="true" />
+        Files never leave your device
+      </div>
+      <h1 class="font-display text-4xl font-bold text-base-50 sm:text-6xl tracking-tight">
         {toolCount}+ Free Online Tools
       </h1>
-      <p class="mx-auto mt-4 max-w-xl text-base text-base-300 sm:text-lg">
-        Fast, focused utilities that run entirely in your browser. No file uploads, no waiting
-        on a server, no account required.
+      <p class="mx-auto mt-5 max-w-xl text-base text-base-300 sm:text-lg leading-relaxed">
+        Fast, focused utilities that run entirely in your browser.
+        No file uploads, no server, no account required.
       </p>
-
-      <div class="mx-auto mt-8 flex max-w-md justify-center">
+      <div class="mx-auto mt-8 flex max-w-sm justify-center">
         <SearchTrigger />
-      </div>
-
-      <div
-        class="mx-auto mt-6 inline-flex items-center gap-2 rounded-full border border-interactive/20 bg-interactive-muted px-4 py-1.5 text-sm text-base-100"
-      >
-        <ShieldCheck size={15} className="text-interactive" aria-hidden="true" />
-        Your files never leave your device
       </div>
     </div>
   </section>
 
   <!-- Category grid -->
-  <section class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-    <h2 class="mb-6 font-display text-2xl font-semibold text-base-50">Browse by category</h2>
-    <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-      {
-        CATEGORIES.map((category) => (
-          <CategoryCard category={category} toolCount={counts[category.slug] ?? 0} />
-        ))
-      }
+  <section class="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+    <h2 class="mb-6 font-display text-2xl font-bold text-base-50">Browse by category</h2>
+    <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+      {CATEGORIES.map((category) => (
+        <CategoryCard category={category} toolCount={counts[category.slug] ?? 0} />
+      ))}
     </div>
   </section>
 
   <!-- Popular tools -->
-  {
-    popularTools.length > 0 && (
-      <section class="mx-auto max-w-6xl px-4 pb-16 sm:px-6">
-        <h2 class="mb-6 font-display text-2xl font-semibold text-base-50">Popular tools</h2>
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {popularTools.map((tool) => (
-            <ToolCard tool={tool} />
-          ))}
-        </div>
-      </section>
-    )
-  }
+  {popularTools.length > 0 && (
+    <section class="mx-auto max-w-6xl px-4 pb-14 sm:px-6">
+      <div class="mb-6 flex items-center justify-between">
+        <h2 class="font-display text-2xl font-bold text-base-50">Popular tools</h2>
+        <a href="/developer-tools" class="text-sm text-base-400 hover:text-interactive transition-colors">
+          Browse all
+        </a>
+      </div>
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {popularTools.map((tool) => <ToolCard tool={tool!} />)}
+      </div>
+    </section>
+  )}
 
-  <!-- Trust section -->
+  <!-- Trust / Features -->
   <section class="border-t border-base-700 bg-base-900 px-4 py-16 sm:px-6">
-    <div class="mx-auto max-w-6xl">
-      <h2 class="mb-8 text-center font-display text-2xl font-semibold text-base-50">
+    <div class="mx-auto max-w-5xl">
+      <h2 class="mb-10 text-center font-display text-2xl font-bold text-base-50">
         Built around your privacy
       </h2>
-      <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
-        <div class="rounded-xl border border-base-700 bg-base-950 p-6">
-          <ShieldCheck size={22} className="mb-3 text-interactive" aria-hidden="true" />
-          <h3 class="mb-1 font-display font-semibold text-base-50">Client-side processing</h3>
-          <p class="text-sm text-base-400">
-            Every tool runs entirely in your browser using JavaScript built into the web
-            platform. Nothing you type or upload is ever sent to a server.
+      <div class="grid grid-cols-1 gap-5 sm:grid-cols-3">
+        <div class="rounded-2xl border border-base-700 bg-base-950 p-6">
+          <div class="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-interactive-muted">
+            <ShieldCheck size={20} className="text-interactive" aria-hidden="true" />
+          </div>
+          <h3 class="mb-2 font-display font-semibold text-base-50">Client-side processing</h3>
+          <p class="text-sm text-base-400 leading-relaxed">
+            Every tool runs in your browser using native web APIs. Nothing
+            you type or upload is ever sent to a server.
           </p>
         </div>
-        <div class="rounded-xl border border-base-700 bg-base-950 p-6">
-          <Zap size={22} className="mb-3 text-interactive" aria-hidden="true" />
-          <h3 class="mb-1 font-display font-semibold text-base-50">No uploads, no waiting</h3>
-          <p class="text-sm text-base-400">
-            Results appear instantly because there's no network round trip — no upload progress
-            bar, no server queue, no rate limit.
+        <div class="rounded-2xl border border-base-700 bg-base-950 p-6">
+          <div class="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-interactive-muted">
+            <Zap size={20} className="text-interactive" aria-hidden="true" />
+          </div>
+          <h3 class="mb-2 font-display font-semibold text-base-50">No uploads, instant results</h3>
+          <p class="text-sm text-base-400 leading-relaxed">
+            Results appear immediately - no upload progress bar, no server
+            queue, no rate limits on your usage.
           </p>
         </div>
-        <div class="rounded-xl border border-base-700 bg-base-950 p-6">
-          <Code2 size={22} className="mb-3 text-interactive" aria-hidden="true" />
-          <h3 class="mb-1 font-display font-semibold text-base-50">Built in the open</h3>
-          <p class="text-sm text-base-400">
-            ToolOrbit is built by a solo developer who actually uses these tools daily — see the
-            About page for the full story.
+        <div class="rounded-2xl border border-base-700 bg-base-950 p-6">
+          <div class="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-interactive-muted">
+            <Code2 size={20} className="text-interactive" aria-hidden="true" />
+          </div>
+          <h3 class="mb-2 font-display font-semibold text-base-50">Solo built, genuinely free</h3>
+          <p class="text-sm text-base-400 leading-relaxed">
+            Built by one developer who actually uses these tools daily.
+            No VC-backed bloat, no upsell traps.
           </p>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- Stats bar -->
+  <section class="border-t border-base-700 bg-base-950 px-4 py-10 sm:px-6">
+    <div class="mx-auto max-w-5xl">
+      <dl class="grid grid-cols-2 gap-4 text-center sm:grid-cols-4">
+        {[
+          { value: `${toolCount}+`, label: 'Free tools' },
+          { value: '6', label: 'Categories' },
+          { value: '0', label: 'Files uploaded' },
+          { value: '$0', label: 'Cost to use' },
+        ].map(({ value, label }) => (
+          <div class="rounded-xl border border-base-700 bg-base-900 px-4 py-5">
+            <dt class="font-display text-3xl font-bold text-interactive">{value}</dt>
+            <dd class="mt-1 text-xs font-medium uppercase tracking-wide text-base-500">{label}</dd>
+          </div>
+        ))}
+      </dl>
     </div>
   </section>
 </BaseLayout>

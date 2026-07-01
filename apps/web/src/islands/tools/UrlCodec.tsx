@@ -26,7 +26,7 @@ export default function UrlCodec() {
       }
       return { output: result, error: null };
     } catch {
-      return { output: '', error: 'Could not decode — this doesn\u2019t look like valid percent-encoding.' };
+      return { output: '', error: 'Could not decode - this doesn\u2019t look like valid percent-encoding.' };
     }
   }, [input, mode, scope]);
 

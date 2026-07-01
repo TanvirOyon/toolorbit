@@ -1,34 +1,31 @@
 ---
 export const prerender = true;
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { CONTACT_EMAIL } from '../lib/config';
+import { buildBreadcrumbJsonLd } from '../lib/seo';
+const breadcrumb = buildBreadcrumbJsonLd([{ name: 'Home', path: '/' }, { name: 'Contact', path: '/contact' }]);
 ---
+<BaseLayout title="Contact | ToolOrbit" description="Get in touch with the ToolOrbit team. Report bugs, suggest tools, or ask questions." canonicalPath="/contact" jsonLd={[breadcrumb]}>
+  <div class="mx-auto max-w-xl px-4 py-16 sm:px-6">
+    <h1 class="font-display text-4xl font-bold text-base-50 mb-3">Contact</h1>
+    <p class="text-base-300 mb-10">Found a bug, have a tool suggestion, or just want to say hello?</p>
 
-<BaseLayout
-  title="Contact ToolOrbit"
-  description="Get in touch with ToolOrbit — bug reports, tool requests, or general feedback."
-  canonicalPath="/contact"
->
-  <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6">
-    <h1 class="font-display text-3xl font-bold text-base-50 sm:text-4xl">Contact</h1>
-
-    <div class="mt-8 space-y-5 text-base-200 leading-relaxed">
-      <p>
-        Found a bug, have a tool request, or just want to say something didn't work the way you
-        expected? Reach out directly:
-      </p>
-      <p>
-        <!-- TODO: replace with your real contact email before launch -->
-        <a
-          href="mailto:tanviroyon001@gmail.com"
-          class="text-lg font-medium text-interactive hover:underline"
-        >
-          tanviroyon001@gmail.com
-        </a>
-      </p>
-      <p class="text-sm text-base-400">
-        A proper contact form with spam protection (Cloudflare Turnstile) is planned for a later
-        phase — for now, email is the fastest way to reach me.
-      </p>
+    <div class="rounded-xl border border-base-700 bg-base-900 p-6 space-y-5">
+      <div>
+        <h2 class="font-display text-lg font-semibold text-base-50 mb-1">Email</h2>
+        <a href={`mailto:${CONTACT_EMAIL}`} class="text-interactive hover:underline text-sm">{CONTACT_EMAIL}</a>
+        <p class="text-xs text-base-500 mt-1">I read every message and aim to reply within 48 hours.</p>
+      </div>
+      <hr class="border-base-700" />
+      <div>
+        <h2 class="font-display text-lg font-semibold text-base-50 mb-1">Bug reports</h2>
+        <p class="text-sm text-base-300">Please include: which tool, what you were trying to do, what browser you're using, and what happened vs what you expected.</p>
+      </div>
+      <hr class="border-base-700" />
+      <div>
+        <h2 class="font-display text-lg font-semibold text-base-50 mb-1">Tool suggestions</h2>
+        <p class="text-sm text-base-300">I'm always looking for tools that are genuinely useful and can run client-side. Send a description of the tool and the use case you have in mind.</p>
+      </div>
     </div>
   </div>
 </BaseLayout>

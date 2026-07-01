@@ -2,18 +2,32 @@ import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { drizzle } from 'drizzle-orm/d1';
 import * as schema from '@toolorbit/db';
+import { SITE_URL } from './config';
 
 /**
- * Creates a fresh better-auth instance bound to the request's D1 database.
- * Call this per-request in SSR routes — do NOT create a module-level singleton,
+ * Alias for the global Cloudflare.Env type (declared in src/env.d.ts, kept in
+ * sync with the bindings in apps/web/wrangler.jsonc). Exported under this
+ * name purely for readability at call sites - it is the same type as the
+ * `env` import from 'cloudflare:workers'.
+ */
+export type WorkerEnv = Cloudflare.Env;
+
+/**
+ * Creates a fresh Better Auth instance bound to the request's D1 database.
+ *
+ * MUST be called per-request in SSR routes - NOT as a module-level singleton,
  * because the D1 binding is specific to each Workers request context.
  *
- * Usage in an Astro SSR route:
- *   const auth = createAuth(locals.runtime.env.DB);
+ * Usage in an Astro SSR route (Astro 6 / @astrojs/cloudflare - bindings and
+ * secrets are read via the native 'cloudflare:workers' module, NOT via
+ * Astro.locals.runtime.env, which throws as of Astro 6):
+ *
+ *   import { env } from 'cloudflare:workers';
+ *   const auth = createAuth(env);
  *   const session = await auth.api.getSession({ headers: request.headers });
  */
-export function createAuth(d1: D1Database) {
-  const db = drizzle(d1, { schema });
+export function createAuth(env: WorkerEnv) {
+  const db = drizzle(env.DB, { schema });
 
   return betterAuth({
     database: drizzleAdapter(db, {
@@ -26,32 +40,28 @@ export function createAuth(d1: D1Database) {
       },
     }),
 
-    // Social OAuth providers — set credentials in Cloudflare Pages env vars:
-    //   GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET
+    secret: env.BETTER_AUTH_SECRET ?? 'toolorbit-dev-secret-change-in-prod',
+
     socialProviders: {
       google: {
-        clientId:     process.env.GOOGLE_CLIENT_ID     ?? '',
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
+        clientId:     env.GOOGLE_CLIENT_ID     ?? '',
+        clientSecret: env.GOOGLE_CLIENT_SECRET ?? '',
       },
       github: {
-        clientId:     process.env.GITHUB_CLIENT_ID     ?? '',
-        clientSecret: process.env.GITHUB_CLIENT_SECRET ?? '',
+        clientId:     env.GITHUB_CLIENT_ID     ?? '',
+        clientSecret: env.GITHUB_CLIENT_SECRET ?? '',
       },
     },
 
-    // Allow requests from your Pages domain
     trustedOrigins: [
-      'https://toolorbit.pages.dev',
-      // Add your custom domain here when ready:
-      // 'https://www.toolorbit.xyz',
+      SITE_URL,
+      // While testing before a custom domain is attached, add your real
+      // workers.dev URL here too (format: https://<worker-name>.<your-account-subdomain>.workers.dev)
+      // - it cannot be predicted in advance, so it is not hardcoded above.
     ],
 
-    // Cookie security — secure: true in production (HTTPS only)
     advanced: {
       cookiePrefix: 'toolorbit',
     },
-
-    // Optional: turn on email + password if you add it later
-    // emailAndPassword: { enabled: true },
   });
 }

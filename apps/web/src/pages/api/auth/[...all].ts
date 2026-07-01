@@ -1,23 +1,11 @@
-/**
- * Better-auth catch-all handler.
- * This single file handles all /api/auth/* requests:
- *   GET  /api/auth/session
- *   POST /api/auth/sign-in/social
- *   POST /api/auth/sign-out
- *   GET  /api/auth/callback/google
- *   GET  /api/auth/callback/github
- *   ...etc
- *
- * prerender = false is REQUIRED — this must run as a Worker.
- */
 export const prerender = false;
 
 import type { APIRoute } from 'astro';
+import { env } from 'cloudflare:workers';
 import { createAuth } from '../../../lib/auth';
 
-const handler: APIRoute = async ({ request, locals }) => {
-  const env = (locals.runtime as { env: Record<string, unknown> }).env;
-  const auth = createAuth(env.DB as D1Database);
+const handler: APIRoute = async ({ request }) => {
+  const auth = createAuth(env);
   return auth.handler(request);
 };
 

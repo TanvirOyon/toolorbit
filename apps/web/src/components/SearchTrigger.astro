@@ -5,22 +5,23 @@ import { Search } from 'lucide-react';
 <button
   type="button"
   id="search-trigger"
-  class="flex h-9 w-full max-w-xs items-center gap-2 rounded-md border border-base-700 bg-base-900 px-3 text-sm text-base-400 transition-colors hover:border-base-600 hover:text-base-200 sm:w-64"
-  aria-label="Search tools"
+  class="group flex h-9 w-full max-w-xs items-center gap-2.5 rounded-lg border border-base-700 bg-base-900 px-3 text-sm text-base-400 transition-all duration-150 hover:border-base-500 hover:bg-base-800 hover:text-base-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-interactive sm:w-60"
+  aria-label="Search tools (Ctrl+K)"
 >
-  <Search size={15} aria-hidden="true" />
-  <span class="flex-1 text-left">Search tools…</span>
-  <kbd
-    class="hidden rounded border border-base-600 bg-base-800 px-1.5 py-0.5 font-mono text-[10px] text-base-400 sm:inline-block"
-  >
-    ⌘K
-  </kbd>
+  <Search size={15} aria-hidden="true" className="shrink-0" />
+  <span class="flex-1 text-left truncate">Search tools...</span>
+  <span class="hidden shrink-0 sm:flex items-center gap-1">
+    <!-- Show Cmd on Mac, Ctrl everywhere else - both work -->
+    <kbd class="rounded border border-base-600 bg-base-800 px-1.5 py-0.5 font-mono text-[10px] leading-none">
+      Ctrl
+    </kbd>
+    <kbd class="rounded border border-base-600 bg-base-800 px-1.5 py-0.5 font-mono text-[10px] leading-none">
+      K
+    </kbd>
+  </span>
 </button>
 
 <script>
-  // Dispatched globally; the CommandPalette island (hydrated client:idle)
-  // listens for this so the trigger button itself stays JS-free until
-  // someone actually opens search.
   const trigger = document.getElementById('search-trigger');
   trigger?.addEventListener('click', () => {
     window.dispatchEvent(new CustomEvent('toolorbit:open-search'));

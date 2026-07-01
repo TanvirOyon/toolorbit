@@ -52,7 +52,7 @@ export default function ImageCompress() {
         <FileDropZone accept="image/jpeg,image/png,image/webp" onFiles={loadFile}
           label="Drop a JPG, PNG, or WebP image here"
           hint="Files are compressed locally in your browser" />
-        {file && <p className="mt-1.5 text-xs text-base-400">{file.name} — {fmtSize(file.size)}</p>}
+        {file && <p className="mt-1.5 text-xs text-base-400">{file.name} - {fmtSize(file.size)}</p>}
       </ToolShellSection>
 
       <ToolShellSection label={`Target max size: ${maxSizeMB} MB`}>
@@ -85,7 +85,7 @@ export default function ImageCompress() {
           </div>
           {savings > 0 && (
             <p className="text-center text-sm text-base-300">
-              {savings.toFixed(1)}% smaller — {fmtSize(file!.size - result.blob.size)} saved
+              {savings.toFixed(1)}% smaller - {fmtSize(file!.size - result.blob.size)} saved
             </p>
           )}
           <Button onClick={download} className="w-full" variant="secondary">

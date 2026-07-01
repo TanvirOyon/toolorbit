@@ -2,78 +2,114 @@
 export const prerender = false;
 
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ToolCard from '../../components/ToolCard.astro';
+import SignOutButton from '../../islands/dashboard/SignOutButton';
+import { env } from 'cloudflare:workers';
 import { createAuth } from '../../lib/auth';
 import { drizzle } from 'drizzle-orm/d1';
 import { favorites, usageHistory } from '@toolorbit/db';
-import { eq, desc } from 'drizzle-orm';
+import { eq, desc, count, asc } from 'drizzle-orm';
 import { ALL_TOOLS } from '@toolorbit/tool-registry';
 
-const env = (Astro.locals.runtime as { env: Record<string, unknown> }).env;
-const auth = createAuth(env.DB as D1Database);
+const auth = createAuth(env);
 const session = await auth.api.getSession({ headers: Astro.request.headers });
 
-if (!session) return Astro.redirect('/?login=1');
+if (!session) return Astro.redirect('/login');
 
-const db = drizzle(env.DB as D1Database);
-const favRows     = await db.select().from(favorites)    .where(eq(favorites.userId,    session.user.id));
-const historyRows = await db.select().from(usageHistory).where(eq(usageHistory.userId, session.user.id))
-  .orderBy(desc(usageHistory.usedAt)).limit(20);
+const db = drizzle(env.DB);
+const favRows = await db
+  .select()
+  .from(favorites)
+  .where(eq(favorites.userId, session.user.id));
 
-const favSlugs    = new Set(favRows.map((r) => r.toolSlug));
+const historyRows = await db
+  .select()
+  .from(usageHistory)
+  .where(eq(usageHistory.userId, session.user.id))
+  .orderBy(desc(usageHistory.usedAt))
+  .limit(20);
+
+const favSlugs   = new Set(favRows.map((r) => r.toolSlug));
+// Deduplicate by slug, keep most recent
 const recentSlugs = [...new Map(historyRows.map((r) => [r.toolSlug, r])).values()].slice(0, 6);
 
 const favTools    = ALL_TOOLS.filter((t) => favSlugs.has(t.slug));
-const recentTools = recentSlugs.map((r) => ALL_TOOLS.find((t) => t.slug === r.toolSlug)).filter(Boolean);
+const recentTools = recentSlugs
+  .map((r) => ALL_TOOLS.find((t) => t.slug === r.toolSlug))
+  .filter(Boolean);
 ---
-<BaseLayout title="Dashboard | ToolOrbit" description="Your saved tools and recent activity.">
-  <div class="mx-auto max-w-4xl px-4 py-10 space-y-10">
+
+<BaseLayout
+  title="Dashboard | ToolOrbit"
+  description="Your saved tools and recent activity on ToolOrbit."
+  canonicalPath="/dashboard"
+>
+  <div class="mx-auto max-w-4xl px-4 py-10 sm:px-6 space-y-10">
+
+    <!-- Profile header -->
     <div class="flex items-center gap-4">
-      {session.user.image && (
-        <img src={session.user.image} alt={session.user.name} class="h-12 w-12 rounded-full border border-base-700" />
+      {session.user.image ? (
+        <img
+          src={session.user.image}
+          alt={session.user.name}
+          class="h-12 w-12 rounded-full border border-base-700"
+          referrerpolicy="no-referrer"
+        />
+      ) : (
+        <div class="flex h-12 w-12 items-center justify-center rounded-full border border-base-700 bg-base-800 font-display text-lg font-bold text-interactive">
+          {session.user.name.charAt(0).toUpperCase()}
+        </div>
       )}
       <div>
-        <h1 class="text-xl font-bold text-base-50">{session.user.name}</h1>
+        <h1 class="font-display text-xl font-bold text-base-50">{session.user.name}</h1>
         <p class="text-sm text-base-400">{session.user.email}</p>
       </div>
-      <a href="/api/auth/sign-out" class="ml-auto text-sm text-base-400 hover:text-base-200 transition-colors">Sign out</a>
+      <!-- FIX: was <a href> GET - now a POST island -->
+      <div class="ml-auto">
+        <SignOutButton client:idle />
+      </div>
     </div>
 
+    <!-- Saved tools -->
     {favTools.length > 0 && (
       <section>
-        <h2 class="text-base font-semibold text-base-200 mb-3">Saved tools ({favTools.length})</h2>
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {favTools.map((t) => (
-            <a href={`/tools/${t.slug}`}
-              class="rounded-xl border border-base-700 bg-base-800/50 p-4 hover:border-base-500 transition-colors group">
-              <p class="text-sm font-medium text-base-100 group-hover:text-interactive transition-colors">{t.name}</p>
-              <p class="text-xs text-base-500 mt-0.5 capitalize">{t.category}</p>
-            </a>
-          ))}
+        <h2 class="mb-4 font-display text-lg font-semibold text-base-200">
+          Saved tools
+          <span class="ml-2 rounded-full bg-base-800 px-2 py-0.5 text-xs font-normal text-base-500">
+            {favTools.length}
+          </span>
+        </h2>
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {favTools.map((t) => <ToolCard tool={t} />)}
         </div>
       </section>
     )}
 
+    <!-- Recent tools -->
     {recentTools.length > 0 && (
       <section>
-        <h2 class="text-base font-semibold text-base-200 mb-3">Recent tools</h2>
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {recentTools.map((t) => t && (
-            <a href={`/tools/${t.slug}`}
-              class="rounded-xl border border-base-700 bg-base-800/50 p-4 hover:border-base-500 transition-colors group">
-              <p class="text-sm font-medium text-base-100 group-hover:text-interactive transition-colors">{t.name}</p>
-              <p class="text-xs text-base-500 mt-0.5 capitalize">{t.category}</p>
-            </a>
-          ))}
+        <h2 class="mb-4 font-display text-lg font-semibold text-base-200">Recently used</h2>
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {recentTools.map((t) => t && <ToolCard tool={t} />)}
         </div>
       </section>
     )}
 
+    <!-- Empty state -->
     {favTools.length === 0 && recentTools.length === 0 && (
-      <div class="text-center py-16 text-base-400">
-        <p class="text-lg">No activity yet.</p>
-        <p class="text-sm mt-1">Use any tool and it will appear here. Click ♡ on a tool page to save it.</p>
-        <a href="/" class="mt-4 inline-block text-sm text-interactive hover:underline">Browse all tools</a>
+      <div class="rounded-2xl border border-base-700 bg-base-900/50 px-6 py-16 text-center">
+        <p class="font-display text-lg text-base-200">No activity yet</p>
+        <p class="mt-1 text-sm text-base-400">
+          Use any tool and it will appear here. Click ♡ on a tool page to save it.
+        </p>
+        <a
+          href="/"
+          class="mt-6 inline-flex items-center gap-1.5 rounded-lg border border-interactive/30 bg-interactive-muted px-4 py-2 text-sm font-medium text-interactive transition-colors hover:bg-interactive-muted/80"
+        >
+          Browse all tools →
+        </a>
       </div>
     )}
+
   </div>
 </BaseLayout>

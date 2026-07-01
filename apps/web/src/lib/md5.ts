@@ -4,7 +4,7 @@
  * `require('buffer')`) gets statically bundled by Vite and fails to
  * resolve inside the Cloudflare/workerd prerender sandbox, which has no
  * Node APIs unless `nodejs_compat` is explicitly enabled. This avoids that
- * entirely — MD5 is not used for anything security-sensitive here, just a
+ * entirely - MD5 is not used for anything security-sensitive here, just a
  * legacy checksum option alongside SHA-1/256/512.
  *
  * Verified against the standard RFC 1321 test vectors.

@@ -2,18 +2,16 @@
 export const prerender = true;
 
 import ToolLayout from '../../layouts/ToolLayout.astro';
-import ToolCard from '../../components/ToolCard.astro';
-import { getAllTools, getToolBySlug, getRelatedTools } from '@toolorbit/tool-registry';
+import ToolCard   from '../../components/ToolCard.astro';
+import { getAllTools, getRelatedTools } from '@toolorbit/tool-registry';
 
-// ─── STATIC IMPORT REQUIREMENT ───────────────────────────────────────────────
-// Astro's compiler resolves `client:*` hydration at BUILD TIME from the
-// literal identifier at the usage site. A dynamic import() or an object-map
-// lookup silently fails to ship the hydration manifest. So every island must
-// be imported statically here, and selected with a string-equality chain below.
-// New tool module shipped → add its imports here + one condition per component.
-// ─────────────────────────────────────────────────────────────────────────────
+// ─── STATIC IMPORT REQUIREMENT ────────────────────────────────────────────────
+// Astro resolves client:* hydration from the LITERAL identifier at usage site.
+// Dynamic import() or object-map lookup silently breaks the hydration manifest.
+// Adding a new module → add its static imports here + one condition per component.
+// ──────────────────────────────────────────────────────────────────────────────
 
-// Phase 0 — Developer Tools
+// Developer Tools
 import JsonFormatter       from '../../islands/tools/JsonFormatter';
 import JsonMinifier        from '../../islands/tools/JsonMinifier';
 import Base64Codec         from '../../islands/tools/Base64Codec';
@@ -25,17 +23,17 @@ import RegexTester         from '../../islands/tools/RegexTester';
 import JwtDecoder          from '../../islands/tools/JwtDecoder';
 import LoremIpsumGenerator from '../../islands/tools/LoremIpsumGenerator';
 
-// Phase 1 — PDF Tools
-import PdfMerge    from '../../islands/tools/PdfMerge';
-import PdfSplit    from '../../islands/tools/PdfSplit';
-import PdfCompress from '../../islands/tools/PdfCompress';
-import PdfRotate   from '../../islands/tools/PdfRotate';
-import PdfToImages from '../../islands/tools/PdfToImages';
-import ImagesToPdf from '../../islands/tools/ImagesToPdf';
+// PDF Tools
+import PdfMerge     from '../../islands/tools/PdfMerge';
+import PdfSplit     from '../../islands/tools/PdfSplit';
+import PdfCompress  from '../../islands/tools/PdfCompress';
+import PdfRotate    from '../../islands/tools/PdfRotate';
+import PdfToImages  from '../../islands/tools/PdfToImages';
+import ImagesToPdf  from '../../islands/tools/ImagesToPdf';
 import PdfWatermark from '../../islands/tools/PdfWatermark';
-import PdfReorder  from '../../islands/tools/PdfReorder';
+import PdfReorder   from '../../islands/tools/PdfReorder';
 
-// Phase 1 — Image Tools
+// Image Tools
 import ImageConvert    from '../../islands/tools/ImageConvert';
 import ImageCompress   from '../../islands/tools/ImageCompress';
 import ImageResizeCrop from '../../islands/tools/ImageResizeCrop';
@@ -43,15 +41,15 @@ import ImageRotateFlip from '../../islands/tools/ImageRotateFlip';
 import ImageWatermark  from '../../islands/tools/ImageWatermark';
 import ImageToBase64   from '../../islands/tools/ImageToBase64';
 
-// Phase 1 — Text Tools
-import WordCounter         from '../../islands/tools/WordCounter';
-import CaseConverter       from '../../islands/tools/CaseConverter';
+// Text Tools
+import WordCounter          from '../../islands/tools/WordCounter';
+import CaseConverter        from '../../islands/tools/CaseConverter';
 import DuplicateLineRemover from '../../islands/tools/DuplicateLineRemover';
-import TextDiff            from '../../islands/tools/TextDiff';
-import StringReverse       from '../../islands/tools/StringReverse';
-import WhitespaceRemover   from '../../islands/tools/WhitespaceRemover';
+import TextDiff             from '../../islands/tools/TextDiff';
+import StringReverse        from '../../islands/tools/StringReverse';
+import WhitespaceRemover    from '../../islands/tools/WhitespaceRemover';
 
-// Phase 1 — Calculators
+// Calculator Tools
 import GpaCalculator        from '../../islands/tools/GpaCalculator';
 import ScientificCalculator from '../../islands/tools/ScientificCalculator';
 import PercentageCalculator from '../../islands/tools/PercentageCalculator';
@@ -59,11 +57,16 @@ import BmiCalculator        from '../../islands/tools/BmiCalculator';
 import AgeCalculator        from '../../islands/tools/AgeCalculator';
 import DateDiffCalculator   from '../../islands/tools/DateDiffCalculator';
 
+// SEO Tools
+import MetaTagGenerator       from '../../islands/tools/MetaTagGenerator';
+import OgTagGenerator         from '../../islands/tools/OgTagGenerator';
+import RobotsTxtGenerator     from '../../islands/tools/RobotsTxtGenerator';
+import SitemapGenerator       from '../../islands/tools/SitemapGenerator';
+import SchemaGenerator        from '../../islands/tools/SchemaGenerator';
+import KeywordDensityChecker  from '../../islands/tools/KeywordDensityChecker';
+
 export function getStaticPaths() {
-  return getAllTools().map((tool) => ({
-    params: { slug: tool.slug },
-    props:  { tool },
-  }));
+  return getAllTools().map(tool => ({ params: { slug: tool.slug }, props: { tool } }));
 }
 
 const { tool } = Astro.props;
@@ -71,7 +74,8 @@ const related  = getRelatedTools(tool);
 ---
 
 <ToolLayout tool={tool}>
-  <!-- Phase 0 — Developer Tools -->
+
+  <!-- Developer Tools -->
   {tool.component === 'JsonFormatter'       && <JsonFormatter       client:idle />}
   {tool.component === 'JsonMinifier'        && <JsonMinifier        client:idle />}
   {tool.component === 'Base64Codec'         && <Base64Codec         client:idle />}
@@ -83,7 +87,7 @@ const related  = getRelatedTools(tool);
   {tool.component === 'JwtDecoder'          && <JwtDecoder          client:idle />}
   {tool.component === 'LoremIpsumGenerator' && <LoremIpsumGenerator client:idle />}
 
-  <!-- Phase 1 — PDF Tools -->
+  <!-- PDF Tools -->
   {tool.component === 'PdfMerge'     && <PdfMerge     client:idle />}
   {tool.component === 'PdfSplit'     && <PdfSplit      client:idle />}
   {tool.component === 'PdfCompress'  && <PdfCompress   client:idle />}
@@ -93,7 +97,7 @@ const related  = getRelatedTools(tool);
   {tool.component === 'PdfWatermark' && <PdfWatermark  client:idle />}
   {tool.component === 'PdfReorder'   && <PdfReorder    client:idle />}
 
-  <!-- Phase 1 — Image Tools -->
+  <!-- Image Tools -->
   {tool.component === 'ImageConvert'    && <ImageConvert    client:idle />}
   {tool.component === 'ImageCompress'   && <ImageCompress   client:idle />}
   {tool.component === 'ImageResizeCrop' && <ImageResizeCrop client:idle />}
@@ -101,7 +105,7 @@ const related  = getRelatedTools(tool);
   {tool.component === 'ImageWatermark'  && <ImageWatermark  client:idle />}
   {tool.component === 'ImageToBase64'   && <ImageToBase64   client:idle />}
 
-  <!-- Phase 1 — Text Tools -->
+  <!-- Text Tools -->
   {tool.component === 'WordCounter'          && <WordCounter          client:idle />}
   {tool.component === 'CaseConverter'        && <CaseConverter        client:idle />}
   {tool.component === 'DuplicateLineRemover' && <DuplicateLineRemover client:idle />}
@@ -109,7 +113,7 @@ const related  = getRelatedTools(tool);
   {tool.component === 'StringReverse'        && <StringReverse        client:idle />}
   {tool.component === 'WhitespaceRemover'    && <WhitespaceRemover    client:idle />}
 
-  <!-- Phase 1 — Calculators -->
+  <!-- Calculator Tools -->
   {tool.component === 'GpaCalculator'        && <GpaCalculator        client:idle />}
   {tool.component === 'ScientificCalculator' && <ScientificCalculator client:idle />}
   {tool.component === 'PercentageCalculator' && <PercentageCalculator client:idle />}
@@ -117,23 +121,36 @@ const related  = getRelatedTools(tool);
   {tool.component === 'AgeCalculator'        && <AgeCalculator        client:idle />}
   {tool.component === 'DateDiffCalculator'   && <DateDiffCalculator   client:idle />}
 
-  <!-- SEO content -->
-  <article class="tool-content mt-10">
+  <!-- SEO Tools -->
+  {tool.component === 'MetaTagGenerator'      && <MetaTagGenerator      client:idle />}
+  {tool.component === 'OgTagGenerator'        && <OgTagGenerator        client:idle />}
+  {tool.component === 'RobotsTxtGenerator'    && <RobotsTxtGenerator    client:idle />}
+  {tool.component === 'SitemapGenerator'      && <SitemapGenerator      client:idle />}
+  {tool.component === 'SchemaGenerator'       && <SchemaGenerator       client:idle />}
+  {tool.component === 'KeywordDensityChecker' && <KeywordDensityChecker client:idle />}
+
+  <!-- SEO Content block -->
+  <article class="tool-content prose prose-invert prose-sm max-w-none mt-10
+    prose-headings:font-display prose-headings:text-base-50
+    prose-p:text-base-300 prose-a:text-interactive prose-code:text-interactive
+    prose-code:bg-base-800 prose-code:rounded prose-code:px-1 prose-code:py-0.5
+    prose-code:font-mono prose-code:text-xs">
     <Fragment set:html={tool.seo.content} />
   </article>
 
-  <!-- FAQ section -->
+  <!-- FAQ section (accordion) -->
   <section class="mt-10 border-t border-base-700 pt-8">
     <h2 class="mb-4 font-display text-xl font-semibold text-base-50">
       Frequently asked questions
     </h2>
     <div class="space-y-2">
       {tool.seo.faq.map((entry) => (
-        <details class="group rounded-lg border border-base-700 bg-base-900 px-4 py-3 open:bg-base-800/50">
-          <summary class="cursor-pointer list-none text-sm font-medium text-base-100 marker:content-none">
+        <details class="group rounded-lg border border-base-700 bg-base-900 px-4 py-3 open:bg-base-800/50 transition-colors">
+          <summary class="flex cursor-pointer list-none items-center justify-between text-sm font-medium text-base-100 marker:content-none">
             {entry.q}
+            <span class="ml-4 shrink-0 text-base-500 transition-transform group-open:rotate-180">▾</span>
           </summary>
-          <p class="mt-2 text-sm text-base-300">{entry.a}</p>
+          <p class="mt-2 text-sm leading-relaxed text-base-300">{entry.a}</p>
         </details>
       ))}
     </div>
@@ -144,9 +161,7 @@ const related  = getRelatedTools(tool);
     <nav class="mt-10 border-t border-base-700 pt-8" aria-label="Related tools">
       <h2 class="mb-4 font-display text-xl font-semibold text-base-50">Related tools</h2>
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {related.map((relatedTool) => (
-          <ToolCard tool={relatedTool} />
-        ))}
+        {related.map(relTool => <ToolCard tool={relTool} />)}
       </div>
     </nav>
   )}

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
+import FavoriteButton from '../islands/ui/FavoriteButton';
 import type { ToolDefinition, CategoryDefinition } from '@toolorbit/tool-registry';
 import { CATEGORIES } from '@toolorbit/tool-registry';
 import { buildToolJsonLd, buildBreadcrumbJsonLd } from '../lib/seo';
@@ -29,11 +30,44 @@ const jsonLd = [...buildToolJsonLd(tool), buildBreadcrumbJsonLd(breadcrumbItems)
 >
   <div class="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
     <Breadcrumbs items={breadcrumbItems} />
-    <header class="mt-4 mb-8">
-      <h1 class="font-display text-3xl font-bold text-base-50 sm:text-4xl">{tool.name}</h1>
-      <p class="mt-2 text-base-300">{tool.description}</p>
+
+    <!-- Tool header -->
+    <header class="mt-4 mb-8 flex items-start justify-between gap-4">
+      <div class="min-w-0 flex-1">
+        <h1 class="font-display text-3xl font-bold tracking-tight text-base-50 sm:text-4xl">
+          {tool.name}
+        </h1>
+        <p class="mt-2 text-base text-base-300">{tool.description}</p>
+      </div>
+      <div class="mt-1 shrink-0">
+        <FavoriteButton slug={tool.slug} client:visible />
+      </div>
     </header>
 
+    <!-- Tool widget -->
     <slot />
+
+    <!-- SEO content -->
+    <article class="tool-content mt-12 border-t border-base-700 pt-8 text-base-300 leading-relaxed">
+      <Fragment set:html={tool.seo.content} />
+    </article>
+
+    <!-- FAQ -->
+    <section class="mt-10 border-t border-base-700 pt-8">
+      <h2 class="mb-5 font-display text-xl font-semibold text-base-50">
+        Frequently asked questions
+      </h2>
+      <div class="space-y-2">
+        {tool.seo.faq.map((entry) => (
+          <details class="group rounded-xl border border-base-700 bg-base-900 px-5 py-4 open:bg-base-800/40">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-medium text-base-100">
+              <span>{entry.q}</span>
+              <span class="shrink-0 text-base-500 transition-transform duration-200 group-open:rotate-45 select-none">+</span>
+            </summary>
+            <p class="mt-3 text-sm leading-relaxed text-base-300">{entry.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
   </div>
 </BaseLayout>

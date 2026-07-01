@@ -9,7 +9,7 @@ function fmtSize(bytes: number) {
 }
 
 function downloadBytes(bytes: Uint8Array, filename: string) {
-  const blob = new Blob([bytes], { type: 'application/pdf' });
+  const blob = new Blob([bytes as unknown as BlobPart], { type: 'application/pdf' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url; a.download = filename; a.click();
@@ -51,7 +51,7 @@ export default function PdfCompress() {
       <ToolShellSection label="PDF File">
         <FileDropZone accept=".pdf,application/pdf" onFiles={compress}
           label="Drop a PDF to compress, or click to browse"
-          hint="Processing happens locally — no upload" />
+          hint="Processing happens locally - no upload" />
       </ToolShellSection>
 
       {status === 'processing' && (
@@ -74,8 +74,8 @@ export default function PdfCompress() {
           </div>
           <p className="text-center text-sm text-base-300">
             {savings > 0
-              ? `${savings.toFixed(1)}% smaller — ${fmtSize(result.original - result.compressed)} saved`
-              : 'File is already optimized — size unchanged'}
+              ? `${savings.toFixed(1)}% smaller - ${fmtSize(result.original - result.compressed)} saved`
+              : 'File is already optimized - size unchanged'}
           </p>
           <Button onClick={download} className="w-full">
             <Package size={16} /> Download Compressed PDF

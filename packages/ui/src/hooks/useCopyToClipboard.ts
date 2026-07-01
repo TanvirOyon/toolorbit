@@ -11,8 +11,7 @@ export function useCopyToClipboard(resetAfterMs = 1500) {
         setCopied(true);
         window.setTimeout(() => setCopied(false), resetAfterMs);
       } catch {
-        // Clipboard API can fail in insecure contexts / older browsers —
-        // fail silently rather than throwing in a tool widget.
+        // Clipboard API can fail in insecure contexts / older browsers -         // fail silently rather than throwing in a tool widget.
         setCopied(false);
       }
     },

@@ -100,7 +100,7 @@ npx wrangler pages deploy dist/client
 
 | Resource | Phase 1 usage | Free limit |
 |---|---|---|
-| Workers requests | Only `/api/*` and `/dashboard` — all 30+ tool pages are static | 100,000 / day |
+| Workers requests | Only `/api/*` and `/dashboard` - all 30+ tool pages are static | 100,000 / day |
 | D1 reads | ~2 reads per dashboard visit (favorites + history) | 5M / day |
 | D1 writes | 1 write per tool use (usage_history) | 100K / day |
 | D1 storage | Minimal (text only, no blobs) | 5 GB |

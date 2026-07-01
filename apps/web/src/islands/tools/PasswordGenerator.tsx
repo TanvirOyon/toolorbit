@@ -41,7 +41,7 @@ export default function PasswordGenerator() {
   function toggleSet(key: CharsetKey) {
     setSets((prev) => {
       const next = prev.includes(key) ? prev.filter((s) => s !== key) : [...prev, key];
-      // Never allow zero charsets — fall back to lowercase rather than
+      // Never allow zero charsets - fall back to lowercase rather than
       // silently generating an empty password.
       return next.length > 0 ? next : ['lower'];
     });

@@ -1,12 +1,9 @@
 import * as React from 'react';
 import { Command } from 'cmdk';
 import Fuse from 'fuse.js';
-import { Search } from 'lucide-react';
+import { Search, ArrowRight } from 'lucide-react';
 import { getSearchIndex, CATEGORIES, type SearchableTool } from '@toolorbit/tool-registry';
 
-// Bundled into the page's JS at build time by Vite/Astro — this is a plain
-// in-memory array by the time it ships, not a fetch, so search is instant
-// and the command palette never makes a network call.
 const SEARCH_INDEX: SearchableTool[] = getSearchIndex();
 
 const fuse = new Fuse(SEARCH_INDEX, {
@@ -28,90 +25,127 @@ export default function CommandPalette() {
     function onKeyDown(e: KeyboardEvent) {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
-        setOpen((prev) => !prev);
+        setOpen((p) => !p);
       }
       if (e.key === 'Escape') setOpen(false);
     }
-    function onOpenRequest() {
-      setOpen(true);
-    }
-
+    function onOpen() { setOpen(true); }
     document.addEventListener('keydown', onKeyDown);
-    window.addEventListener('toolorbit:open-search', onOpenRequest);
+    window.addEventListener('toolorbit:open-search', onOpen);
     return () => {
       document.removeEventListener('keydown', onKeyDown);
-      window.removeEventListener('toolorbit:open-search', onOpenRequest);
+      window.removeEventListener('toolorbit:open-search', onOpen);
     };
   }, []);
 
-  const results = query.trim()
-    ? fuse.search(query).map((r) => r.item)
-    : SEARCH_INDEX;
+  // Reset query when closing
+  React.useEffect(() => { if (!open) setQuery(''); }, [open]);
 
+  const results = query.trim() ? fuse.search(query).map((r) => r.item) : SEARCH_INDEX;
   const grouped = results.reduce<Record<string, SearchableTool[]>>((acc, tool) => {
     (acc[tool.category] ??= []).push(tool);
     return acc;
   }, {});
 
-  function navigateTo(slug: string) {
+  function go(slug: string) {
     setOpen(false);
     window.location.href = `/tools/${slug}`;
   }
 
+  if (!open) return null;
+
   return (
-    <Command.Dialog
-      open={open}
-      onOpenChange={setOpen}
-      label="Search ToolOrbit"
-      shouldFilter={false}
-      className="fixed inset-0 z-command-palette"
-    >
+    <div className="fixed inset-0 z-[50] flex items-start justify-center pt-[10vh] px-4">
+      {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-base-950/70 backdrop-blur-sm"
+        className="absolute inset-0 bg-base-950/75 backdrop-blur-sm"
         onClick={() => setOpen(false)}
         aria-hidden="true"
       />
-      <div className="fixed left-1/2 top-24 w-[92vw] max-w-xl -translate-x-1/2 overflow-hidden rounded-xl border border-base-700 bg-base-900 shadow-lg">
-        <div className="flex items-center gap-2 border-b border-base-700 px-4">
-          <Search size={16} className="text-base-400" aria-hidden="true" />
+
+      {/* Dialog */}
+      <Command
+        shouldFilter={false}
+        className="relative w-full max-w-lg overflow-hidden rounded-2xl border border-base-700 bg-base-900 shadow-2xl"
+        aria-label="Search ToolOrbit"
+      >
+        {/* Search input */}
+        <div className="flex items-center gap-3 border-b border-base-700 px-4 py-3">
+          <Search size={16} className="shrink-0 text-base-400" aria-hidden="true" />
           <Command.Input
             autoFocus
             value={query}
             onValueChange={setQuery}
-            placeholder="Search tools…"
-            className="h-12 flex-1 bg-transparent text-sm text-base-50 placeholder:text-base-400 focus:outline-none"
+            placeholder="Search 42 tools..."
+            className="h-8 flex-1 bg-transparent text-sm text-base-50 placeholder:text-base-500 focus:outline-none"
           />
-          <kbd className="rounded border border-base-600 bg-base-800 px-1.5 py-0.5 font-mono text-[10px] text-base-400">
+          {query && (
+            <button
+              type="button"
+              onClick={() => setQuery('')}
+              className="shrink-0 text-xs text-base-500 hover:text-base-300 transition-colors"
+            >
+              Clear
+            </button>
+          )}
+          <kbd
+            onClick={() => setOpen(false)}
+            className="shrink-0 cursor-pointer rounded border border-base-600 bg-base-800 px-1.5 py-0.5 font-mono text-[10px] text-base-400 hover:text-base-200 transition-colors"
+          >
             Esc
           </kbd>
         </div>
 
-        <Command.List className="max-h-[60vh] overflow-y-auto p-2">
-          <Command.Empty className="px-3 py-6 text-center text-sm text-base-400">
-            No tools found for "{query}"
+        {/* Results */}
+        <Command.List className="max-h-[55vh] overflow-y-auto overscroll-contain p-2">
+          <Command.Empty className="flex flex-col items-center gap-2 py-10 text-center text-sm text-base-400">
+            <Search size={24} className="text-base-600" />
+            <span>No tools found for <strong className="text-base-300">"{query}"</strong></span>
           </Command.Empty>
 
           {Object.entries(grouped).map(([category, tools]) => (
-            <Command.Group
-              key={category}
-              heading={categoryNameBySlug[category] ?? category}
-              className="px-1 py-2 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wide [&_[cmdk-group-heading]]:text-base-400"
-            >
-              {tools.map((tool) => (
+            <Command.Group key={category}>
+              <div className="mb-1 mt-3 px-2 text-[10px] font-semibold uppercase tracking-widest text-base-500 first:mt-0">
+                {categoryNameBySlug[category] ?? category}
+              </div>
+              {tools.slice(0, query ? tools.length : 5).map((tool) => (
                 <Command.Item
                   key={tool.slug}
                   value={tool.slug}
-                  onSelect={() => navigateTo(tool.slug)}
-                  className="flex cursor-pointer flex-col gap-0.5 rounded-md px-3 py-2 text-sm text-base-100 aria-selected:bg-interactive-muted aria-selected:text-interactive"
+                  onSelect={() => go(tool.slug)}
+                  className="group flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 transition-colors aria-selected:bg-interactive-muted"
                 >
-                  <span className="font-medium">{tool.name}</span>
-                  <span className="text-xs text-base-400">{tool.description}</span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-base-100 group-aria-selected:text-interactive truncate">
+                      {tool.name}
+                    </p>
+                    <p className="mt-0.5 text-xs text-base-500 truncate">{tool.description}</p>
+                  </div>
+                  <ArrowRight
+                    size={14}
+                    className="shrink-0 text-base-600 opacity-0 transition-opacity group-aria-selected:text-interactive group-aria-selected:opacity-100"
+                  />
                 </Command.Item>
               ))}
+              {!query && tools.length > 5 && (
+                <a
+                  href={`/${category}-tools`}
+                  className="block px-3 py-1.5 text-xs text-base-500 hover:text-interactive transition-colors"
+                >
+                  +{tools.length - 5} more {categoryNameBySlug[category]} tools...
+                </a>
+              )}
             </Command.Group>
           ))}
         </Command.List>
-      </div>
-    </Command.Dialog>
+
+        {/* Footer hint */}
+        <div className="border-t border-base-700 px-4 py-2 flex items-center gap-4 text-[10px] text-base-600">
+          <span><kbd className="font-mono">Enter</kbd> to open</span>
+          <span><kbd className="font-mono">Esc</kbd> to close</span>
+          <span className="ml-auto">{results.length} tools</span>
+        </div>
+      </Command>
+    </div>
   );
 }

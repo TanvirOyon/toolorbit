@@ -2,7 +2,7 @@ import { text, integer, sqliteTable, primaryKey } from 'drizzle-orm/sqlite-core'
 
 // -----------------------------------------------
 // Better-auth managed tables (auto-migrated by better-auth)
-// These are here for Drizzle type safety only — better-auth creates them.
+// These are here for Drizzle type safety only - better-auth creates them.
 // -----------------------------------------------
 export const user = sqliteTable('user', {
   id:            text('id').primaryKey(),

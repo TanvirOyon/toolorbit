@@ -4,27 +4,36 @@
   "compatibility_date": "2026-06-01",
   "compatibility_flags": ["nodejs_compat"],
 
-  // Phase 1 — D1 database binding for better-auth + user favorites.
+  // Enables CPU time, error counts, and real-time logs in Cloudflare dashboard.
+  // Free, zero setup beyond this flag.
+  "observability": {
+    "enabled": true
+  },
+
+  // D1 database binding for Better Auth + user favorites.
   // Steps to provision:
   //   1. npx wrangler d1 create toolorbit
-  //   2. Copy the returned `database_id` into the value below.
-  //   3. Run the migration: npx wrangler d1 execute toolorbit --file=migrations/0001_init.sql
-  //   4. For local dev: wrangler reads this file and proxies D1 via platformProxy.
+  //   2. Copy the returned database_id below.
+  //   3. npx wrangler d1 execute toolorbit --remote --file=migrations/0001_init.sql
   "d1_databases": [
     {
       "binding": "DB",
       "database_name": "toolorbit",
-      "database_id": "f24f3fb3-4fcd-4419-b1f8-40a58e67744a"
+      "database_id": "REPLACE_WITH_YOUR_D1_DATABASE_ID"
     }
   ]
 
-  // Optional KV namespace for rate-limiting (Phase 2):
+  // KV for rate-limiting (Phase 2, not yet wired into app code):
   // "kv_namespaces": [
   //   { "binding": "RATE_LIMIT_KV", "id": "REPLACE_WITH_KV_ID" }
   // ]
 
-  // IMPORTANT: do NOT add "pages_build_output_dir" here.
-  // @astrojs/cloudflare generates this internally. Adding it causes wrangler
-  // to reject the adapter's "ASSETS" binding name as reserved, breaking the
-  // build entirely. Leave output path handling to the root build step.
+  // NOTE on the SESSION KV binding you will see in apps/web/dist/server/wrangler.json
+  // after building: @astrojs/cloudflare auto-wires Astro's own built-in astro:session
+  // feature to Cloudflare KV by default whenever it targets Cloudflare. This is
+  // separate from Better Auth, which manages all real session/auth state itself via
+  // the session table in D1 above. Nothing in this app calls Astro.session, so the
+  // KV namespace stays empty, but it still needs to exist for wrangler deploy to
+  // succeed. Wrangler's automatic-provisioning feature creates it on first deploy
+  // with zero manual steps - see DEPLOY.md. No action needed in this file.
 }

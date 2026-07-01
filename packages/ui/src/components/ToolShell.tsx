@@ -4,22 +4,36 @@ import { IrisAnimation, type IrisState } from './IrisAnimation.js';
 import { cn } from '../cn.js';
 
 export interface ToolShellProps {
-  /** Optional small status indicator shown top-right (the iris ring). */
   state?: IrisState;
-  /** The input controls (textarea, file drop zone, option toggles, etc). */
   children: React.ReactNode;
-  /** Optional error string rendered in the error-tinted banner. */
   error?: string | null;
   className?: string;
+  /**
+   * Tool slug for usage tracking. If omitted the shell reads it from the URL
+   * path (/tools/<slug>) automatically - so most islands don't need to pass it.
+   */
+  slug?: string;
 }
 
-/**
- * Every tool island in ToolOrbit renders inside ToolShell, so the visual
- * "container" — card surface, border, the iris status ring, and error
- * banner — is consistent across all ~500 future tools without each one
- * re-implementing it.
- */
-export function ToolShell({ state = 'idle', children, error, className }: ToolShellProps) {
+export function ToolShell({ state = 'idle', children, error, className, slug }: ToolShellProps) {
+  React.useEffect(() => {
+    // Auto-detect slug from /tools/<slug> if not explicitly provided
+    const effectiveSlug =
+      slug ??
+      (typeof window !== 'undefined'
+        ? window.location.pathname.match(/\/tools\/([^/]+)/)?.[1]
+        : undefined);
+
+    if (!effectiveSlug) return;
+
+    fetch('/api/usage', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ slug: effectiveSlug }),
+    }).catch(() => { /* silent - anonymous users get 401, that's fine */ });
+  }, [slug]);
+
   return (
     <Card className={cn('p-4 sm:p-6 space-y-4', className)}>
       <div className="flex items-center justify-end">

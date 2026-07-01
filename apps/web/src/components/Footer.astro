@@ -1,59 +1,78 @@
 ---
 import { ShieldCheck } from 'lucide-react';
 import { CATEGORIES, getCategoryCounts } from '@toolorbit/tool-registry';
+import { SITE_NAME, SITE_URL } from '../lib/config';
 
-const counts = getCategoryCounts(CATEGORIES);
+const counts       = getCategoryCounts(CATEGORIES);
 const liveCategories = CATEGORIES.filter((c) => counts[c.slug] > 0);
-const year = new Date().getFullYear();
+const year         = new Date().getFullYear();
 ---
 
 <footer class="border-t border-base-700 bg-base-900">
   <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-    <div
-      class="mb-10 flex items-center gap-3 rounded-lg border border-interactive/20 bg-interactive-muted px-4 py-3 text-sm text-base-100"
-    >
+
+    <!-- Privacy trust banner -->
+    <div class="mb-10 flex items-center gap-3 rounded-lg border border-interactive/20 bg-interactive-muted px-4 py-3 text-sm text-base-100">
       <ShieldCheck size={18} className="shrink-0 text-interactive" aria-hidden="true" />
-      <span>Every tool here runs in your browser. Your files never leave your device.</span>
+      <span>Every tool runs in your browser. Your files never leave your device.</span>
     </div>
 
+    <!-- Link columns -->
     <div class="grid grid-cols-2 gap-8 sm:grid-cols-4">
+      <!-- Categories -->
       <div>
-        <h3 class="mb-3 text-xs font-medium uppercase tracking-wide text-base-400">Tools</h3>
+        <h3 class="mb-3 text-xs font-medium uppercase tracking-wide text-base-400">Categories</h3>
         <ul class="space-y-2 text-sm">
-          {
-            liveCategories.map((category) => (
-              <li>
-                <a href={`/${category.slug}-tools`} class="text-base-300 hover:text-base-50">
-                  {category.name}
-                </a>
-              </li>
-            ))
-          }
+          {liveCategories.map((category) => (
+            <li>
+              <a href={`/${category.slug}-tools`} class="text-base-300 transition-colors hover:text-base-50">
+                {category.name}
+              </a>
+            </li>
+          ))}
         </ul>
       </div>
 
+      <!-- Resources -->
+      <div>
+        <h3 class="mb-3 text-xs font-medium uppercase tracking-wide text-base-400">Resources</h3>
+        <ul class="space-y-2 text-sm">
+          <li><a href="/blog" class="text-base-300 transition-colors hover:text-base-50">Blog</a></li>
+          <li><a href="/blog/compress-pdf-without-losing-quality" class="text-base-300 transition-colors hover:text-base-50">PDF Compression Guide</a></li>
+          <li><a href="/blog/open-graph-tags-complete-guide" class="text-base-300 transition-colors hover:text-base-50">Open Graph Tags Guide</a></li>
+          <li><a href="/blog/json-formatter-vs-editor" class="text-base-300 transition-colors hover:text-base-50">JSON Formatter Guide</a></li>
+        </ul>
+      </div>
+
+      <!-- Company -->
       <div>
         <h3 class="mb-3 text-xs font-medium uppercase tracking-wide text-base-400">Company</h3>
         <ul class="space-y-2 text-sm">
-          <li><a href="/about" class="text-base-300 hover:text-base-50">About</a></li>
-          <li><a href="/contact" class="text-base-300 hover:text-base-50">Contact</a></li>
+          <li><a href="/about" class="text-base-300 transition-colors hover:text-base-50">About</a></li>
+          <li><a href="/contact" class="text-base-300 transition-colors hover:text-base-50">Contact</a></li>
+          <li><a href="/privacy" class="text-base-300 transition-colors hover:text-base-50">Privacy Policy</a></li>
+          <li><a href="/terms" class="text-base-300 transition-colors hover:text-base-50">Terms</a></li>
         </ul>
       </div>
 
+      <!-- Account -->
       <div>
-        <h3 class="mb-3 text-xs font-medium uppercase tracking-wide text-base-400">Legal</h3>
+        <h3 class="mb-3 text-xs font-medium uppercase tracking-wide text-base-400">Account</h3>
         <ul class="space-y-2 text-sm">
-          <li><a href="/privacy" class="text-base-300 hover:text-base-50">Privacy Policy</a></li>
-          <li><a href="/terms" class="text-base-300 hover:text-base-50">Terms of Service</a></li>
+          <li><a href="/login" class="text-base-300 transition-colors hover:text-base-50">Sign in</a></li>
+          <li><a href="/dashboard" class="text-base-300 transition-colors hover:text-base-50">Dashboard</a></li>
         </ul>
       </div>
     </div>
 
-    <div
-      class="mt-10 flex flex-col gap-2 border-t border-base-800 pt-6 text-xs text-base-400 sm:flex-row sm:items-center sm:justify-between"
-    >
-      <p>&copy; {year} ToolOrbit. All rights reserved.</p>
-      <p>Built with privacy-first, client-side processing.</p>
+    <!-- Bottom bar -->
+    <div class="mt-10 flex flex-col items-center justify-between gap-3 border-t border-base-700 pt-6 sm:flex-row">
+      <p class="text-sm text-base-500">
+        © {year} {SITE_NAME}. All tools are free.
+      </p>
+      <p class="text-xs text-base-600">
+        Built with Astro · Cloudflare Pages · No servers, no tracking
+      </p>
     </div>
   </div>
 </footer>

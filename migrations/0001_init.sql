@@ -1,5 +1,5 @@
 -- ============================================================
--- ToolOrbit Phase 1 — Initial D1 schema
+-- ToolOrbit Phase 1 - Initial D1 schema
 -- Run:  npx wrangler d1 execute toolorbit --file=migrations/0001_init.sql
 -- Local: npx wrangler d1 execute toolorbit --local --file=migrations/0001_init.sql
 -- ============================================================

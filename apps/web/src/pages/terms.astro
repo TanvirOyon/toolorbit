@@ -1,64 +1,28 @@
 ---
 export const prerender = true;
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { buildBreadcrumbJsonLd } from '../lib/seo';
+const breadcrumb = buildBreadcrumbJsonLd([{ name: 'Home', path: '/' }, { name: 'Terms', path: '/terms' }]);
 ---
-
-<BaseLayout
-  title="Terms of Service — ToolOrbit"
-  description="Terms of service for using ToolOrbit's free online tools."
-  canonicalPath="/terms"
->
+<BaseLayout title="Terms of Service | ToolOrbit" description="Terms of service for using ToolOrbit's free online tools." canonicalPath="/terms" jsonLd={[breadcrumb]}>
   <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6">
-    <h1 class="font-display text-3xl font-bold text-base-50 sm:text-4xl">Terms of Service</h1>
-    <p class="mt-2 text-sm text-base-400">Last updated: June 2026</p>
-
-    <div class="mt-8 space-y-6 text-base-200 leading-relaxed">
-      <section>
-        <h2 class="mb-2 font-display text-lg font-semibold text-base-50">Use of the service</h2>
-        <p>
-          ToolOrbit provides free, browser-based utility tools "as is," without warranty of any
-          kind. You're free to use these tools for personal or commercial purposes. You agree not
-          to use ToolOrbit to violate any applicable law, to attempt to disrupt or overload the
-          site, or to scrape or republish the site's content wholesale.
-        </p>
-      </section>
-
-      <section>
-        <h2 class="mb-2 font-display text-lg font-semibold text-base-50">No warranty</h2>
-        <p>
-          Tools are provided without guarantee of accuracy, availability, or fitness for any
-          particular purpose. You are responsible for verifying output before relying on it for
-          anything important — for example, double-checking a generated hash or a decoded token
-          before using it in a production system.
-        </p>
-      </section>
-
-      <section>
-        <h2 class="mb-2 font-display text-lg font-semibold text-base-50">Limitation of liability</h2>
-        <p>
-          ToolOrbit and its operator are not liable for any damages, direct or indirect, arising
-          from your use of (or inability to use) the tools on this site.
-        </p>
-      </section>
-
-      <section>
-        <h2 class="mb-2 font-display text-lg font-semibold text-base-50">Changes to these terms</h2>
-        <p>
-          These terms may be updated as the site evolves — for example, as new tools, accounts,
-          or paid features are introduced. Continued use of the site after a change constitutes
-          acceptance of the updated terms.
-        </p>
-      </section>
-
-      <section>
-        <h2 class="mb-2 font-display text-lg font-semibold text-base-50">Contact</h2>
-        <p>
-          Questions about these terms can be sent through the <a
-            href="/contact"
-            class="text-interactive hover:underline">contact page</a
-          >.
-        </p>
-      </section>
+    <h1 class="font-display text-4xl font-bold text-base-50 mb-2">Terms of Service</h1>
+    <p class="text-sm text-base-500 mb-10">Last updated: June 28, 2026</p>
+    <div class="prose prose-invert max-w-none prose-headings:font-display prose-headings:text-base-50 prose-p:text-base-300 prose-li:text-base-300 prose-a:text-interactive prose-strong:text-base-100">
+      <h2>Acceptance</h2>
+      <p>By using ToolOrbit, you agree to these terms. If you do not agree, please do not use the service.</p>
+      <h2>Service</h2>
+      <p>ToolOrbit provides free browser-based tools. Tools are provided "as is" without warranty of any kind. We make no guarantees about the accuracy, reliability, or fitness for a particular purpose of any tool output.</p>
+      <h2>Acceptable use</h2>
+      <p>You may use ToolOrbit for any lawful purpose. You may not use automated scripts to abuse the service, attempt to reverse-engineer or circumvent any security measures, or use the service to process files you do not have the right to process.</p>
+      <h2>Accounts</h2>
+      <p>You are responsible for maintaining the security of your account. We reserve the right to suspend or terminate accounts that violate these terms.</p>
+      <h2>Limitation of liability</h2>
+      <p>ToolOrbit is not liable for any loss or damage arising from the use or inability to use the service, including but not limited to data loss. Always keep backups of important files before processing them with any tool.</p>
+      <h2>Changes</h2>
+      <p>We may update these terms. Continued use of the service after changes constitutes acceptance of the new terms.</p>
+      <h2>Contact</h2>
+      <p>Questions: <a href="mailto:tanviroyon001@gmail.com">tanviroyon001@gmail.com</a></p>
     </div>
   </div>
 </BaseLayout>

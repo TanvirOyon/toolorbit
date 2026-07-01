@@ -66,7 +66,7 @@ export default function ImageConvert() {
         <FileDropZone accept="image/*" onFiles={loadFile}
           label="Drop an image here, or click to browse"
           hint="JPG, PNG, WebP, AVIF supported" />
-        {file && <p className="mt-1.5 text-xs text-base-400">{file.name} — {fmtSize(file.size)}</p>}
+        {file && <p className="mt-1.5 text-xs text-base-400">{file.name} - {fmtSize(file.size)}</p>}
       </ToolShellSection>
 
       <ToolShellSection label="Output format">

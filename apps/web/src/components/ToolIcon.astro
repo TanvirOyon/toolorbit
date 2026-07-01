@@ -1,0 +1,46 @@
+---
+/**
+ * Renders the correct Lucide icon for a tool or category by slug name.
+ * Uses named imports instead of wildcard - tree-shakeable and type-safe.
+ */
+import {
+  Activity, Archive, ArrowLeftRight, Bot, Braces,
+  Calculator, CalendarDays, CalendarRange, CaseSensitive,
+  Code, Code2, Crop, FileImage, FilePlus2, FileText,
+  Fingerprint, FlipHorizontal2, GitCompare, GraduationCap,
+  Hash, Image, KeyRound, Link, ListMinus, ListOrdered,
+  Map, Minimize, Minimize2, Percent, Regex, RemoveFormatting,
+  RotateCw, Scissors, Search, Share2, ShieldCheck, Stamp,
+  Terminal, Text, Type,
+} from 'lucide-react';
+
+const ICON_MAP: Record<string, unknown> = {
+  'activity': Activity, 'archive': Archive, 'arrow-left-right': ArrowLeftRight,
+  'bot': Bot, 'braces': Braces, 'calculator': Calculator,
+  'calendar-days': CalendarDays, 'calendar-range': CalendarRange,
+  'case-sensitive': CaseSensitive, 'code': Code, 'code-2': Code2,
+  'crop': Crop, 'file-image': FileImage, 'file-plus-2': FilePlus2,
+  'file-text': FileText, 'fingerprint': Fingerprint,
+  'flip-horizontal-2': FlipHorizontal2, 'git-compare': GitCompare,
+  'graduation-cap': GraduationCap, 'hash': Hash, 'image': Image,
+  'key-round': KeyRound, 'link': Link, 'list-minus': ListMinus,
+  'list-ordered': ListOrdered, 'map': Map, 'minimize': Minimize,
+  'minimize-2': Minimize2, 'percent': Percent, 'regex': Regex,
+  'remove-formatting': RemoveFormatting, 'rotate-cw': RotateCw,
+  'scissors': Scissors, 'search': Search, 'share-2': Share2,
+  'shield-check': ShieldCheck, 'stamp': Stamp, 'terminal': Terminal,
+  'text': Text, 'type': Type,
+};
+
+export interface Props {
+  name: string;
+  size?: number;
+  className?: string;
+}
+
+const { name, size = 20, className = '' } = Astro.props;
+// Fallback: FileText if icon name not in map (prevents build crash on new additions)
+const Icon = (ICON_MAP[name] ?? FileText) as any;
+---
+
+<Icon size={size} class={className} aria-hidden="true" />

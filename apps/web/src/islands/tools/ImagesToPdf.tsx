@@ -5,7 +5,7 @@ import { FileImage, Trash2, GripVertical } from 'lucide-react';
 interface ImgItem { id: string; file: File; preview: string }
 
 function downloadBytes(bytes: Uint8Array, filename: string) {
-  const blob = new Blob([bytes], { type: 'application/pdf' });
+  const blob = new Blob([bytes as unknown as BlobPart], { type: 'application/pdf' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a'); a.href = url; a.download = filename; a.click();
   URL.revokeObjectURL(url);
@@ -73,7 +73,7 @@ export default function ImagesToPdf() {
       <ToolShellSection label={`Images${items.length ? ` (${items.length})` : ''}`}>
         <FileDropZone accept="image/jpeg,image/png,image/webp,image/*" multiple onFiles={addFiles}
           label="Drop JPG, PNG, or WebP images here"
-          hint="Each image becomes one page — drag to reorder" />
+          hint="Each image becomes one page - drag to reorder" />
         {items.length > 0 && (
           <div className="mt-2 grid grid-cols-3 sm:grid-cols-4 gap-2">
             {items.map((item, idx) => (

@@ -1,7 +1,7 @@
 import type { ToolDefinition, CategoryDefinition } from '@toolorbit/tool-registry';
+import { SITE_URL, SITE_NAME } from './config';
 
-const SITE_NAME = 'ToolOrbit';
-export const SITE_URL = 'https://toolorbit.pages.dev';
+export { SITE_URL };
 
 export function absoluteUrl(path: string): string {
   return new URL(path, SITE_URL).toString();

@@ -2,9 +2,9 @@ import * as React from 'react';
 import { ToolShell, ToolShellSection, Textarea, Input, type IrisState } from '@toolorbit/ui';
 
 const FLAGS = [
-  { key: 'g', label: 'g', title: 'Global — find all matches' },
+  { key: 'g', label: 'g', title: 'Global - find all matches' },
   { key: 'i', label: 'i', title: 'Case-insensitive' },
-  { key: 'm', label: 'm', title: 'Multiline — ^ and $ match line boundaries' },
+  { key: 'm', label: 'm', title: 'Multiline - ^ and $ match line boundaries' },
   { key: 's', label: 's', title: 'Dot matches newline' },
 ] as const;
 

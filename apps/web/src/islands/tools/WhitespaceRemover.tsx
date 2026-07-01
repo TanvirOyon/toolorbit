@@ -73,7 +73,7 @@ export default function WhitespaceRemover() {
             placeholder="Paste text with extra whitespace here…"
             className="w-full rounded-lg border border-base-700 bg-base-900 p-3 text-sm text-base-100 placeholder:text-base-500 resize-none focus:outline-none focus:ring-1 focus:ring-interactive" />
         </ToolShellSection>
-        <ToolShellSection label={`Output${charsSaved > 0 ? ` — ${charsSaved} chars removed` : ''}`}
+        <ToolShellSection label={`Output${charsSaved > 0 ? ` - ${charsSaved} chars removed` : ''}`}
           action={output ? (
             <button type="button" onClick={copy}
               className="flex items-center gap-1 text-xs text-base-400 hover:text-base-200 transition-colors">

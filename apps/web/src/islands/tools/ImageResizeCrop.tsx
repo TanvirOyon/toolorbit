@@ -93,7 +93,7 @@ export default function ImageResizeCrop() {
     <ToolShell state={state} error={error}>
       <ToolShellSection label="Image">
         <FileDropZone accept="image/*" onFiles={loadFile} label="Drop an image here, or click to browse" hint="Files stay on your device" />
-        {file && <p className="mt-1.5 text-xs text-base-400">{file.name} — {origW}×{origH}px</p>}
+        {file && <p className="mt-1.5 text-xs text-base-400">{file.name} - {origW}×{origH}px</p>}
       </ToolShellSection>
 
       <div className="flex gap-2">

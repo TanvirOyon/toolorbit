@@ -7,21 +7,23 @@
   },
   "scripts": {
     "dev": "pnpm --filter web dev",
-    "build": "corepack pnpm --filter web build",
-    "postbuild": "node ./scripts/prepare-pages-dist.mjs",
+    "build": "pnpm --filter web build",
     "preview": "pnpm --filter web preview",
     "lint": "pnpm -r --if-present lint",
     "test": "pnpm -r --if-present test",
     "format": "prettier --write \"**/*.{ts,tsx,astro,md,json}\"",
     "db:generate": "drizzle-kit generate",
     "db:migrate:local": "wrangler d1 execute toolorbit --local --config apps/web/wrangler.jsonc --file=migrations/0001_init.sql",
-    "db:migrate:remote": "wrangler d1 execute toolorbit --remote --config apps/web/wrangler.jsonc --file=migrations/0001_init.sql"
+    "db:migrate:remote": "wrangler d1 execute toolorbit --remote --config apps/web/wrangler.jsonc --file=migrations/0001_init.sql",
+    "deploy": "pnpm --filter web build && wrangler deploy --config apps/web/dist/server/wrangler.json",
+    "deploy:dry-run": "pnpm --filter web build && wrangler deploy --config apps/web/dist/server/wrangler.json --dry-run"
   },
   "devDependencies": {
     "drizzle-kit": "^0.29.0",
     "prettier": "^3.4.2",
     "prettier-plugin-astro": "^0.14.1",
     "typescript": "^5.7.2",
-    "wrangler": "^4.0.0"
+    "wrangler": "^4.0.0",
+    "@cloudflare/workers-types": "^4.0.0"
   }
 }

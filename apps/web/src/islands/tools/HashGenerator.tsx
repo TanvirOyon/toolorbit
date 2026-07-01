@@ -70,7 +70,7 @@ export default function HashGenerator() {
               rows={algo === 'SHA-512' ? 2 : 1}
               readOnly
               value={hashes[algo]}
-              placeholder="—"
+              placeholder="-"
               className="resize-none"
             />
           </ToolShellSection>

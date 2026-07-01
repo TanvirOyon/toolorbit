@@ -17,6 +17,6 @@ export default defineConfig({
   dialect: 'sqlite',
   schema:  './packages/db/src/schema.ts',
   out:     './migrations',
-  // D1 does not expose a libsql URL locally — we generate plain SQL migrations
+  // D1 does not expose a libsql URL locally - we generate plain SQL migrations
   // and apply them via wrangler d1 execute. No dbCredentials needed.
 });
